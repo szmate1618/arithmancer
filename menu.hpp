@@ -54,6 +54,10 @@ void Menu::Update()
 	DWORD events;
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
 
+	DWORD numberOfInputEvents;
+	GetNumberOfConsoleInputEvents(hInput, &numberOfInputEvents);
+	if (numberOfInputEvents <= 0) return;
+
 	ReadConsoleInput(hInput, &inputRecord, 1, &events);
 
 	if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
