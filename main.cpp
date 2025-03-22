@@ -15,8 +15,12 @@ int main() {
 
     ScreenBuffer screenBuffer(100, 50);
     Menu menu;
-    menu.Draw(screenBuffer);
-    screenBuffer.Display();
+    while (true) {
+        menu.Update();
+        menu.Draw(screenBuffer);
+        SetCursorPosition(0, 0);
+        screenBuffer.Display();
+    }
 
     return 0;
 }

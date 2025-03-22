@@ -34,10 +34,12 @@ public:
 
     void Display() const 
     {
-        for (const auto& row : buffer) {
+        for (size_t i = 0; i < buffer.size(); i++)
+        {
+            const auto& row = buffer.at(i);
             for (char c : row)
                 std::cout << c;
-            std::cout << '\n';
+            if (i != buffer.size() - 1) std::cout << '\n';
         }
     }
 };

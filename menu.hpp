@@ -11,6 +11,7 @@ class Menu
 public:
 	Menu();
 	void Draw(ScreenBuffer& screenBuffer);
+	void Update();
 private:
 	enum class Option
 	{
@@ -42,6 +43,26 @@ void Menu::Draw(ScreenBuffer& screenBuffer)
 		if (static_cast<Option>(i) == selectedOption) {
 
 			screenBuffer.setChar(startH, startW - 2, '>');
+		}
+	}
+}
+
+void Menu::Update()
+{
+	// Read a key from the console
+	INPUT_RECORD inputRecord;
+	DWORD events;
+	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
+
+	ReadConsoleInput(hInput, &inputRecord, 1, &events);
+
+	if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
+	{
+		int keyCode = inputRecord.Event.KeyEvent.wVirtualKeyCode;
+		
+		if (keyCode == VK_UP)
+		{
+			std::cout << "Up arrow key pressed!" << std::endl;
 		}
 	}
 }
