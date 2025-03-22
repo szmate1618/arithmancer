@@ -25,4 +25,8 @@ public:
     const std::vector<std::vector<char>>& getBuffer() const {
         return buffer;
     }
+
+    void setChar(size_t h, size_t w, char c) {
+        buffer.at(h).at(w) = c;
+    }
 };
