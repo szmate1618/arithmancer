@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 
@@ -28,5 +30,14 @@ public:
 
     void setChar(size_t h, size_t w, char c) {
         buffer.at(h).at(w) = c;
+    }
+
+    void Display() const 
+    {
+        for (const auto& row : buffer) {
+            for (char c : row)
+                std::cout << c;
+            std::cout << '\n';
+        }
     }
 };
