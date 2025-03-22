@@ -7,11 +7,14 @@
 class Map
 {
 public:
+    enum class TileType { WALL, FLOOR, START, GOAL, EMPTY };
+
     Map(size_t width, size_t height, size_t roomCount);
     void PrintDungeon();
 private:
     size_t WIDTH, HEIGHT;
-    std::vector<std::vector<char>> grid;
+    std::vector<std::vector<TileType>> grid;
+    static constexpr char tileChars[] = { '#', '.', 'S', 'G', ' ' };
 
     struct Room {
         int x, y, w, h;
@@ -20,7 +23,7 @@ private:
     void GenerateDungeon(size_t roomCount);
 };
 
-Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(height), grid(height, std::vector<char>(width))
+Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(height), grid(height, std::vector<TileType>(width, TileType::WALL))
 {
     GenerateDungeon(roomCount);
 }
@@ -28,8 +31,8 @@ Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(h
 // Print the dungeon
 void Map::PrintDungeon() {
     for (const auto& row : grid) {
-        for (char cell : row)
-            std::cout << cell;
+        for (TileType cell : row)
+            std::cout << tileChars[static_cast<int>(cell)];
         std::cout << '\n';
     }
 }
@@ -38,11 +41,6 @@ void Map::PrintDungeon() {
 void Map::GenerateDungeon(size_t roomCount) {
     std::vector<Room> rooms;
     srand(time(0));
-
-    // Initialize grid with walls
-    for (int i = 0; i < HEIGHT; ++i)
-        for (int j = 0; j < WIDTH; ++j)
-            grid[i][j] = '#';
 
     // Place rooms
     for (int i = 0; i < roomCount; ++i) {
@@ -58,7 +56,7 @@ void Map::GenerateDungeon(size_t roomCount) {
         // Carve out the room
         for (int y = ry; y < ry + rh; ++y)
             for (int x = rx; x < rx + rw; ++x)
-                grid[y][x] = '.';
+                grid[y][x] = TileType::FLOOR;
     }
 
     // Connect rooms with corridors
@@ -73,34 +71,40 @@ void Map::GenerateDungeon(size_t roomCount) {
 
         // Horizontal tunnel
         for (int x = std::min(x1, x2); x <= std::max(x1, x2); ++x)
-            grid[y1][x] = '.';
+            grid[y1][x] = TileType::FLOOR;
 
         // Vertical tunnel
         for (int y = std::min(y1, y2); y <= std::max(y1, y2); ++y)
-            grid[y][x2] = '.';
+            grid[y][x2] = TileType::FLOOR;
     }
 
-    // Pass 1: Remove isolated walls (turn '#' into ' ' if not adjacent to '.')
-    std::vector<std::vector<char>> tempGrid = grid;
+    // Pass 1: Remove isolated walls (turn WALL into EMPTY if not adjacent to FLOOR)
+    std::vector<std::vector<TileType>> tempGrid = grid;
     for (int y = 1; y < HEIGHT - 1; ++y) {
         for (int x = 1; x < WIDTH - 1; ++x) {
-            if (grid[y][x] == '#') {
+            if (grid[y][x] == TileType::WALL) {
                 bool hasNeighbor = false;
                 for (int dy = -1; dy <= 1; ++dy)
                     for (int dx = -1; dx <= 1; ++dx)
-                        if (grid[y + dy][x + dx] == '.')
+                        if (grid[y + dy][x + dx] == TileType::FLOOR)
                             hasNeighbor = true;
 
                 if (!hasNeighbor)
-                    tempGrid[y][x] = ' '; // Remove isolated walls
+                    tempGrid[y][x] = TileType::EMPTY; // Remove isolated walls
             }
         }
     }
     grid = tempGrid;
 
-    // Pass 2: Convert all remaining '.' to spaces
+    // Pass 2: Convert all remaining FLOOR to EMPTY
     for (int y = 0; y < HEIGHT; ++y)
         for (int x = 0; x < WIDTH; ++x)
-            if (grid[y][x] == '.')
-                grid[y][x] = ' ';
+            if (grid[y][x] == TileType::FLOOR)
+                grid[y][x] = TileType::EMPTY;
+
+    // Set START and GOAL positions
+    if (!rooms.empty()) {
+        grid[rooms.front().y + rooms.front().h / 2][rooms.front().x + rooms.front().w / 2] = TileType::START;
+        grid[rooms.back().y + rooms.back().h / 2][rooms.back().x + rooms.back().w / 2] = TileType::GOAL;
+    }
 }
