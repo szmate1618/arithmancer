@@ -26,5 +26,8 @@
     <ClInclude Include="map.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
