@@ -4,6 +4,7 @@
 #include <string>
 
 #include "screen.hpp"
+#include "input.hpp"
 
 
 class Menu
@@ -28,6 +29,14 @@ Menu::Menu(): selectedOption(Option::NEW_GAME) {}
 
 void Menu::Draw(ScreenBuffer& screenBuffer)
 {
+	for (size_t i = 0; i < screenBuffer.getHeight(); i++)
+	{
+		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
+		{
+			screenBuffer.setChar(i, j, ' ');
+		}
+	}
+
 	size_t optionCount = optionTexts.size();
 	for (size_t i = 0; i < optionTexts.size(); i++)
 	{
@@ -49,24 +58,12 @@ void Menu::Draw(ScreenBuffer& screenBuffer)
 
 void Menu::Update()
 {
-	// Read a key from the console
-	INPUT_RECORD inputRecord;
-	DWORD events;
-	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
-
-	DWORD numberOfInputEvents;
-	GetNumberOfConsoleInputEvents(hInput, &numberOfInputEvents);
-	if (numberOfInputEvents <= 0) return;
-
-	ReadConsoleInput(hInput, &inputRecord, 1, &events);
-
-	if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
+	if (InputHandler::IsUpPressed() || InputHandler::IsPressed('w'))
 	{
-		int keyCode = inputRecord.Event.KeyEvent.wVirtualKeyCode;
-		
-		if (keyCode == VK_UP)
-		{
-			std::cout << "Up arrow key pressed!" << std::endl;
-		}
+		selectedOption = static_cast<Option>((static_cast<int>(selectedOption) + 1) % optionTexts.size());
+	}
+	if (InputHandler::IsDownPressed() || InputHandler::IsPressed('s'))
+	{
+		selectedOption = static_cast<Option>((static_cast<int>(selectedOption) - 1) % optionTexts.size());
 	}
 }

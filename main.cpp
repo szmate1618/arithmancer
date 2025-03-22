@@ -16,6 +16,7 @@ int main() {
     ScreenBuffer screenBuffer(100, 50);
     Menu menu;
     while (true) {
+        InputHandler::Update();
         menu.Update();
         menu.Draw(screenBuffer);
         SetCursorPosition(0, 0);
