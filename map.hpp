@@ -82,4 +82,28 @@ void Map::GenerateDungeon(size_t roomCount) {
         for (int y = std::min(y1, y2); y <= std::max(y1, y2); ++y)
             grid[y][x2] = '.';
     }
+
+    // Pass 1: Remove isolated walls (turn '#' into ' ' if not adjacent to '.')
+    std::vector<std::vector<char>> tempGrid = grid;
+    for (int y = 1; y < HEIGHT - 1; ++y) {
+        for (int x = 1; x < WIDTH - 1; ++x) {
+            if (grid[y][x] == '#') {
+                bool hasNeighbor = false;
+                for (int dy = -1; dy <= 1; ++dy)
+                    for (int dx = -1; dx <= 1; ++dx)
+                        if (grid[y + dy][x + dx] == '.')
+                            hasNeighbor = true;
+
+                if (!hasNeighbor)
+                    tempGrid[y][x] = ' '; // Remove isolated walls
+            }
+        }
+    }
+    grid = tempGrid;
+
+    // Pass 2: Convert all remaining '.' to spaces
+    for (int y = 0; y < HEIGHT; ++y)
+        for (int x = 0; x < WIDTH; ++x)
+            if (grid[y][x] == '.')
+                grid[y][x] = ' ';
 }
