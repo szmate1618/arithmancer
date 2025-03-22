@@ -29,5 +29,11 @@
     <ClInclude Include="game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="menu.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="screen.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
