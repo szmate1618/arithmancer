@@ -53,20 +53,26 @@ void InputHandler::Update()
 	{
 		isPressed.at(i) = false;
 	}
+	
+	/*isPressed.at('s') = true;
+	return;*/
 
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
+	
 	DWORD numberOfInputEvents;
 	GetNumberOfConsoleInputEvents(hInput, &numberOfInputEvents);
+	if (numberOfInputEvents <= 0) return;
 
-	for (size_t i = 0; i < numberOfInputEvents; i++)
+	INPUT_RECORD inputRecord[128];
+	DWORD events;
+	ReadConsoleInput(hInput, inputRecord, 128, &events);  // TODO: I think this is causing slowness.
+
+	for (size_t i = 0; i < events; i++)
 	{
-		INPUT_RECORD inputRecord;
-		DWORD events;
-		ReadConsoleInput(hInput, &inputRecord, 1, &events);  // TODO: I think this is causing slowness.
 
-		if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
+		if (inputRecord[i].EventType == KEY_EVENT && inputRecord[i].Event.KeyEvent.bKeyDown)
 		{
-			int keyCode = inputRecord.Event.KeyEvent.wVirtualKeyCode;
+			int keyCode = inputRecord[i].Event.KeyEvent.wVirtualKeyCode;
 
 			// 0x41 is the Windows virtual keycode for key A, 0x61 is the ASCII code for the character 'a'.
 			if (keyCode > 0x41) keyCode = keyCode - 0x41 + 0x61;
