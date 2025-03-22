@@ -49,7 +49,10 @@ bool InputHandler::IsRightPressed()
 
 void InputHandler::Update()
 {
-	isPressed = std::vector<bool>(256, false);
+	for (size_t i = 0; i < isPressed.size(); i++)
+	{
+		isPressed.at(i) = false;
+	}
 
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
 	DWORD numberOfInputEvents;
@@ -59,7 +62,7 @@ void InputHandler::Update()
 	{
 		INPUT_RECORD inputRecord;
 		DWORD events;
-		ReadConsoleInput(hInput, &inputRecord, 1, &events);
+		ReadConsoleInput(hInput, &inputRecord, 1, &events);  // TODO: I think this is causing slowness.
 
 		if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
 		{
