@@ -4,16 +4,13 @@
 #include <ctime>
 #include <algorithm>
 
-const int WIDTH = 100;
-const int HEIGHT = 100;
-
 class Map
 {
 public:
-    Map(size_t roomCount);
+    Map(size_t width, size_t height, size_t roomCount);
     void PrintDungeon();
 private:
-
+    size_t WIDTH, HEIGHT;
     std::vector<std::vector<char>> grid;
 
     struct Room {
@@ -23,7 +20,7 @@ private:
     void GenerateDungeon(size_t roomCount);
 };
 
-Map::Map(size_t roomCount): grid(HEIGHT, std::vector<char>(WIDTH))
+Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(height), grid(height, std::vector<char>(width))
 {
     GenerateDungeon(roomCount);
 }

@@ -8,7 +8,7 @@
 int main() {
     SetConsoleSize(100, 100);
 
-    Map map(20);
+    Map map(100, 100, 20);
     map.PrintDungeon();
 
     return 0;
