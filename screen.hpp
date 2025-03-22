@@ -1,17 +1,18 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 
 class ScreenBuffer {
 private:
-    std::vector<std::vector<char>> buffer;
+    std::vector<std::string> buffer;
     int width;
     int height;
 
 public:
     // Constructor
-    ScreenBuffer(int w, int h) : width(w), height(h), buffer(h, std::vector<char>(w, ' ')) {}
+    ScreenBuffer(int w, int h) : width(w), height(h), buffer(h, std::string(w, ' ')) {}
 
     // Getter for width
     int getWidth() const {
@@ -24,7 +25,7 @@ public:
     }
 
     // Getter for buffer
-    const std::vector<std::vector<char>>& getBuffer() const {
+    const std::vector<std::string>& getBuffer() const {
         return buffer;
     }
 
@@ -37,9 +38,8 @@ public:
         for (size_t i = 0; i < buffer.size(); i++)
         {
             const auto& row = buffer.at(i);
-            for (char c : row)
-                std::cout << c;
-            if (i != buffer.size() - 1) std::cout << '\n';
+            printf("%s", row.c_str());
+            if (i != buffer.size() - 1) printf("\n");
         }
     }
 };

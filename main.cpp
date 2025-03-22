@@ -13,6 +13,9 @@ const int TARGET_FPS = 30;
 const int FRAME_TIME = 1000 / TARGET_FPS; // 33.33 ms per frame
 
 int main() {
+
+    //std::ios_base::sync_with_stdio(false);
+
     SetConsoleSize(100, 50);
 
     Map map(100, 50, 20);
@@ -35,7 +38,7 @@ int main() {
         std::chrono::duration<double, std::milli> frame_duration = frame_end - frame_start;
 
         if (frame_duration.count() < FRAME_TIME) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_TIME) - frame_duration);
+           std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_TIME) - frame_duration);
         }
     }
     return 0;
