@@ -44,4 +44,12 @@ public:
     bool IsSolved() const {
         return solved;
     }
+
+	std::string GetName() const {
+		return name;
+	}
+
+	double GetErrorMargin() const {
+		return errorMargin;
+	}
 };
