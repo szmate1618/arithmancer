@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "screen.hpp"
+#include "input.hpp"
 
 
 class Map
@@ -23,6 +24,7 @@ public:
     void PrintDungeon(ScreenBuffer& screenBuffer);
     bool IsWalkable(int x, int y) const;
     void PlacePlayer(int x, int y);
+    void Update();
 
 private:
     size_t WIDTH, HEIGHT;
@@ -63,12 +65,34 @@ bool Map::IsWalkable(int x, int y) const {
 
 // Place the player on a walkable tile
 void Map::PlacePlayer(int x, int y) {
-    if (IsWalkable(x, y)) {
+    if (IsWalkable(x, y)) {  // TODO: Maybe this is redundant?
         player.x = x;
         player.y = y;
         player.standingOn = grid[y][x];
-        grid[y][x] = TileType::PLAYER;
+        //grid[y][x] = TileType::PLAYER;
     }
+}
+
+void Map::Update()
+{
+	int dx = 0, dy = 0;
+	if (InputHandler::IsUpPressed()) dy = -1;
+	if (InputHandler::IsDownPressed()) dy = 1;
+	if (InputHandler::IsLeftPressed()) dx = -1;
+	if (InputHandler::IsRightPressed()) dx = 1;
+	if (dx != 0 || dy != 0) {
+		int newX = player.x + dx;
+		int newY = player.y + dy;
+		if (IsWalkable(newX, newY)) {
+			PlacePlayer(newX, newY);
+		}
+        else if (IsWalkable(newX, player.y)) {
+            PlacePlayer(newX, player.y);
+        }
+        else if (IsWalkable(player.x, newY)) {
+            PlacePlayer(player.x, newY);
+        }
+	}
 }
 
 // Dungeon generation function

@@ -49,6 +49,7 @@ public:
 			menu.Update();
 			break;
 		case State::WANDERING:
+            map.Update();
 			break;
 		case State::BATTLE:
 			break;
