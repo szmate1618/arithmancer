@@ -25,7 +25,7 @@ public:
 
     virtual double GetResult() const = 0;
 
-    virtual double GetProblemStatement() const = 0;
+    virtual std::string GetProblemStatement() const = 0;
 
     void Guess(const std::string& guess) {
         try {
