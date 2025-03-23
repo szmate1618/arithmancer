@@ -7,6 +7,7 @@
 #include "map.hpp"
 #include "screen.hpp"
 #include "menu.hpp"
+#include "game.hpp"
 
 
 const int TARGET_FPS = 30;
@@ -23,17 +24,17 @@ int main() {
     ScreenBuffer screenBuffer(100, 50);
     map.PrintDungeon(screenBuffer);
     screenBuffer.Display();
-    Menu menu;
+    //Menu menu;
 
-    bool running = true;
-    while (running) {
+    Game game;
+    while (game.IsRunning()) {
         auto frame_start = std::chrono::steady_clock::now();
 
-        InputHandler::Update();
+       /* InputHandler::Update();
         menu.Update();
         menu.Draw(screenBuffer);
         SetCursorPosition(0, 0);
-        screenBuffer.Display();
+        screenBuffer.Display();*/
 
         auto frame_end = std::chrono::steady_clock::now();
         std::chrono::duration<double, std::milli> frame_duration = frame_end - frame_start;
