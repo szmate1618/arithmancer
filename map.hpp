@@ -29,7 +29,7 @@ public:
 private:
     size_t WIDTH, HEIGHT;
     std::vector<std::vector<TileType>> grid;
-    static constexpr char tileChars[] = { '#', '.', 'S', 'G', ' ', '@', '*' };
+    static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
     static constexpr bool walkable[] = { false, true, true, true, true, true, true };
     Player player;
 
@@ -154,12 +154,12 @@ void Map::GenerateDungeon(size_t roomCount) {
     }
     grid = tempGrid;
 
-    // Pass 2: Convert all remaining FLOOR to EMPTY
+    // Pass 2: Add enemies.
     for (int y = 0; y < HEIGHT; ++y)
         for (int x = 0; x < WIDTH; ++x)
             if (grid[y][x] == TileType::FLOOR)
-                grid[y][x] = TileType::EMPTY;
-
+                if (rand()%100 == 0) grid[y][x] = TileType::ENEMY;
+                
     // Set START and GOAL positions
     if (!rooms.empty()) {
         int sx = rooms.front().x + rooms.front().w / 2;
