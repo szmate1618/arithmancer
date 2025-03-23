@@ -30,7 +30,7 @@ private:
     size_t WIDTH, HEIGHT;
     std::vector<std::vector<TileType>> grid;
     static constexpr char tileChars[] = { '#', '.', 'S', 'G', ' ', '@', '*' };
-    static constexpr bool walkable[] = { false, true, true, true, true, false, false };
+    static constexpr bool walkable[] = { false, true, true, true, true, true, true };
     Player player;
 
     struct Room {
