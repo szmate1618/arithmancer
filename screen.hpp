@@ -33,6 +33,16 @@ public:
         buffer.at(h).at(w) = c;
     }
 
+	void clear() {
+		for (size_t i = 0; i < buffer.size(); i++)
+		{
+			for (size_t j = 0; j < buffer.at(i).size(); j++)
+			{
+				buffer.at(i).at(j) = ' ';
+			}
+		}
+	}
+
     void Display() const 
     {
         for (size_t i = 0; i < buffer.size(); i++)
