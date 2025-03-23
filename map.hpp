@@ -9,14 +9,24 @@
 class Map
 {
 public:
-    enum class TileType { WALL, FLOOR, START, GOAL, EMPTY };
+    enum class TileType { WALL, FLOOR, START, GOAL, EMPTY, PLAYER, ENEMY };
+
+    struct Player {
+        int x, y;
+        TileType standingOn;
+    };
 
     Map(size_t width, size_t height, size_t roomCount);
     void PrintDungeon();
+    bool IsWalkable(int x, int y) const;
+    void PlacePlayer(int x, int y);
+
 private:
     size_t WIDTH, HEIGHT;
     std::vector<std::vector<TileType>> grid;
-    static constexpr char tileChars[] = { '#', '.', 'S', 'G', ' ' };
+    static constexpr char tileChars[] = { '#', '.', 'S', 'G', ' ', '@', '*' };
+    static constexpr bool walkable[] = { false, true, true, true, true, false, false };
+    Player player;
 
     struct Room {
         int x, y, w, h;
@@ -36,6 +46,22 @@ void Map::PrintDungeon() {
         for (TileType cell : row)
             std::cout << tileChars[static_cast<int>(cell)];
         std::cout << '\n';
+    }
+}
+
+// Check if a position is walkable
+bool Map::IsWalkable(int x, int y) const {
+    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return false;
+    return walkable[static_cast<int>(grid[y][x])];
+}
+
+// Place the player on a walkable tile
+void Map::PlacePlayer(int x, int y) {
+    if (IsWalkable(x, y)) {
+        player.x = x;
+        player.y = y;
+        player.standingOn = grid[y][x];
+        grid[y][x] = TileType::PLAYER;
     }
 }
 
@@ -106,7 +132,13 @@ void Map::GenerateDungeon(size_t roomCount) {
 
     // Set START and GOAL positions
     if (!rooms.empty()) {
-        grid[rooms.front().y + rooms.front().h / 2][rooms.front().x + rooms.front().w / 2] = TileType::START;
-        grid[rooms.back().y + rooms.back().h / 2][rooms.back().x + rooms.back().w / 2] = TileType::GOAL;
+        int sx = rooms.front().x + rooms.front().w / 2;
+        int sy = rooms.front().y + rooms.front().h / 2;
+        grid[sy][sx] = TileType::START;
+        PlacePlayer(sx, sy);
+
+        int gx = rooms.back().x + rooms.back().w / 2;
+        int gy = rooms.back().y + rooms.back().h / 2;
+        grid[gy][gx] = TileType::GOAL;
     }
 }
