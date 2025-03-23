@@ -41,5 +41,8 @@
     <ClInclude Include="problem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="battle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
