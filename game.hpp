@@ -6,6 +6,7 @@
 #include "map.hpp"
 #include "screen.hpp"
 #include "menu.hpp"
+#include "input.hpp"
 
 
 class Game {
@@ -25,13 +26,15 @@ public:
     {
     }
 
-    void Draw(const std::vector<std::vector<char>>& grid) {
+    void Draw(ScreenBuffer& screenBuffer) {
+        screenBuffer.clear();
+
         switch (gameState) {
         case State::MENU:
-            drawMenu();
+			menu.Draw(screenBuffer);
             break;
         case State::WANDERING:
-            drawWandering(grid);
+            map.PrintDungeon(screenBuffer);
             break;
         case State::BATTLE:
             drawBattle();
@@ -40,8 +43,10 @@ public:
     }
 
 	void Update() {
+		InputHandler::Update();
 		switch (gameState) {
 		case State::MENU:
+			menu.Update();
 			break;
 		case State::WANDERING:
 			break;

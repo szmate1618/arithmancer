@@ -19,16 +19,21 @@ int main() {
 
     SetConsoleSize(100, 50);
 
-    Map map(100, 50, 20);
+    //Map map(100, 50, 20);
 
     ScreenBuffer screenBuffer(100, 50);
-    map.PrintDungeon(screenBuffer);
+    //map.PrintDungeon(screenBuffer);
     screenBuffer.Display();
     //Menu menu;
 
     Game game;
     while (game.IsRunning()) {
         auto frame_start = std::chrono::steady_clock::now();
+
+		game.Update();
+		game.Draw(screenBuffer);
+		SetCursorPosition(0, 0);
+		screenBuffer.Display();
 
        /* InputHandler::Update();
         menu.Update();
