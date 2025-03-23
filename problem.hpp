@@ -23,12 +23,14 @@ public:
         lifetime -= seconds;
     }
 
-    virtual double Result() const = 0;
+    virtual double GetResult() const = 0;
+
+    virtual double GetProblemStatement() const = 0;
 
     void Guess(const std::string& guess) {
         try {
             double guessedValue = std::stod(guess);
-            if (std::abs(guessedValue - Result()) <= errorMargin) {
+            if (std::abs(guessedValue - GetResult()) <= errorMargin) {
                 solved = true;
             }
         }
