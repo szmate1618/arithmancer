@@ -138,6 +138,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="map.hpp" />
     <ClInclude Include="menu.hpp" />
+    <ClInclude Include="problem.hpp" />
     <ClInclude Include="screen.hpp" />
     <ClInclude Include="windowing.hpp" />
   </ItemGroup>
