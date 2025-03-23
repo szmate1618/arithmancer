@@ -19,9 +19,10 @@ int main() {
     SetConsoleSize(100, 50);
 
     Map map(100, 50, 20);
-    map.PrintDungeon();
 
     ScreenBuffer screenBuffer(100, 50);
+    map.PrintDungeon(screenBuffer);
+    screenBuffer.Display();
     Menu menu;
 
     bool running = true;

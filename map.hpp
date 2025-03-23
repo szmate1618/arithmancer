@@ -6,6 +6,9 @@
 #include <ctime>
 #include <algorithm>
 
+#include "screen.hpp"
+
+
 class Map
 {
 public:
@@ -17,7 +20,7 @@ public:
     };
 
     Map(size_t width, size_t height, size_t roomCount);
-    void PrintDungeon();
+    void PrintDungeon(ScreenBuffer& screenBuffer);
     bool IsWalkable(int x, int y) const;
     void PlacePlayer(int x, int y);
 
@@ -41,12 +44,15 @@ Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(h
 }
 
 // Print the dungeon
-void Map::PrintDungeon() {
-    for (const auto& row : grid) {
-        for (TileType cell : row)
-            std::cout << tileChars[static_cast<int>(cell)];
-        std::cout << '\n';
+void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
+    for (size_t i = 0; i < grid.size(); i++)
+    {
+        for (size_t j = 0; j < grid.at(i).size(); j++)
+        {
+			screenBuffer.setChar(i, j, tileChars[static_cast<int>(grid.at(i).at(j))]);
+        }
     }
+    screenBuffer.setChar(player.y, player.x, tileChars[static_cast<int>(TileType::PLAYER)]);
 }
 
 // Check if a position is walkable
