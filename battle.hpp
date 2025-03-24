@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <memory>
+#include <format>
 
 #include "problem.hpp"
+#include "screen.hpp"
 
 
 class Battle {
@@ -20,4 +22,49 @@ public:
             problem->Update(seconds);
         }
     }
+
+	void Draw(ScreenBuffer& screenBuffer) {
+		
+		size_t margin = 1;
+		size_t gap = 1;
+		size_t problemTextHeight = 3;
+		size_t height = problems.size() * (problemTextHeight + gap) + margin;
+
+		size_t firstLine = screenBuffer.getHeight() - 1 - height;
+
+		for (size_t i = firstLine; i < screenBuffer.getHeight(); i++)
+		{
+			for (size_t j = 0; j < screenBuffer.getWidth(); j++)
+			{
+				screenBuffer.setChar(i, j, ' ');
+			}
+		}
+
+		size_t currentLine = firstLine + margin;
+		for (size_t i = 0; i < problems.size(); i++) {
+			std::string problemHeader = std::format("{0} - error margin = {1}", problems[i]->GetName(), problems[i]->GetErrorMargin());
+			std::string problemStatement = problems[i]->GetProblemStatement() + std::string("=");
+			std::string remainingTime = "Remainging time: ";
+			std::string timeBar = remainingTime + std::string(screenBuffer.getWidth() - margin * 2 - remainingTime.length(), '=');
+
+			for (size_t j = 0; j < problemHeader.length(); j++)
+			{
+				screenBuffer.setChar(currentLine, margin + j, problemHeader[j]);
+			}
+			currentLine++;
+
+			for (size_t j = 0; j < problemStatement.length(); j++)
+			{
+				screenBuffer.setChar(currentLine, margin + j, problemStatement[j]);
+			}
+			currentLine++;
+
+			for (size_t j = 0; j < timeBar.length(); j++)
+			{
+				screenBuffer.setChar(currentLine, margin + j, timeBar[j]);
+			}
+			currentLine++;
+			currentLine += gap;
+		}
+	}
 };
