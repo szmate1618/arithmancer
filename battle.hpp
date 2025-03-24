@@ -43,7 +43,7 @@ public:
 		size_t currentLine = firstLine + margin;
 		for (size_t i = 0; i < problems.size(); i++) {
 			std::string problemHeader = std::format("{0} - error margin = {1}", problems[i]->GetName(), problems[i]->GetErrorMargin());
-			std::string problemStatement = problems[i]->GetProblemStatement() + std::string("=");
+			std::string problemStatement = problems[i]->GetProblemStatement() + std::string(" = ");
 			std::string remainingTime = "Remainging time: ";
 			std::string timeBar = remainingTime + std::string(screenBuffer.getWidth() - margin * 2 - remainingTime.length(), '=');
 
