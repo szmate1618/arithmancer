@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdlib>
 
 
 class Problem {
@@ -54,4 +55,34 @@ public:
 	double GetErrorMargin() const {
 		return errorMargin;
 	}
+};
+
+class AdditionProblem : public Problem
+{
+public:
+    AdditionProblem(double lifetime = 10, double errorMargin = 0)
+        : Problem("Additive arachnid", lifetime, errorMargin) {
+		numbers.push_back(rand() % 10);
+		numbers.push_back(rand() % 10);
+    }
+
+    virtual ~AdditionProblem() = default;
+
+    double GetResult() const override {
+        int sum = 0;
+        for (auto& n : numbers)
+            sum += n;
+        return sum;
+    }
+
+    std::string GetProblemStatement() const override {
+        std::string text = std::to_string(numbers.at(0));
+        for (size_t i = 1; i < numbers.size(); i++)
+        {
+			text += " + " + std::to_string(numbers.at(i));
+        }
+        return text;
+    }
+private:
+	std::vector<int> numbers;
 };
