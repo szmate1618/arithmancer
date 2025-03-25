@@ -57,6 +57,7 @@ public:
 			break;
 		case State::ENTERING_BATTLE:
             gameState = State::BATTLE;
+            battle.Update(seconds);
 			break;
 		case State::BATTLE:
             battle.Update(seconds);
