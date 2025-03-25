@@ -6,7 +6,6 @@
 #include "windowing.hpp"
 #include "map.hpp"
 #include "screen.hpp"
-#include "menu.hpp"
 #include "game.hpp"
 
 
@@ -30,7 +29,7 @@ int main() {
     while (game.IsRunning()) {
         auto frame_start = std::chrono::steady_clock::now();
 
-		game.Update();
+		game.Update(1.0 / TARGET_FPS);
 		game.Draw(screenBuffer);
 		SetCursorPosition(0, 0);
 		screenBuffer.Display();

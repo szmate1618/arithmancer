@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <functional>
 
 #include "screen.hpp"
 #include "input.hpp"
@@ -20,13 +21,14 @@ public:
         TileType standingOn;
     };
 
-    Map(size_t width, size_t height, size_t roomCount);
+    Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount);
     void PrintDungeon(ScreenBuffer& screenBuffer);
     bool IsWalkable(int x, int y) const;
     void PlacePlayer(int x, int y);
-    void Update();
+    void Update(double seconds);
 
 private:
+    std::function<void()> startBattleCallback;
     size_t WIDTH, HEIGHT;
     std::vector<std::vector<TileType>> grid;
     static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
@@ -40,7 +42,11 @@ private:
     void GenerateDungeon(size_t roomCount);
 };
 
-Map::Map(size_t width, size_t height, size_t roomCount) : WIDTH(width), HEIGHT(height), grid(height, std::vector<TileType>(width, TileType::WALL))
+Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount) :
+    startBattleCallback(startBattleCallback),
+    WIDTH(width),
+    HEIGHT(height),
+    grid(height, std::vector<TileType>(width, TileType::WALL))
 {
     GenerateDungeon(roomCount);
 }
@@ -73,7 +79,7 @@ void Map::PlacePlayer(int x, int y) {
     }
 }
 
-void Map::Update()
+void Map::Update(double seconds)
 {
 	int dx = 0, dy = 0;
 	if (InputHandler::IsUpPressed()) dy = -1;
@@ -92,6 +98,9 @@ void Map::Update()
         else if (IsWalkable(player.x, newY)) {
             PlacePlayer(player.x, newY);
         }
+		if (player.standingOn == TileType::ENEMY) {
+			startBattleCallback();
+		}
 	}
 }
 

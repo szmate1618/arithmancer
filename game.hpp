@@ -7,6 +7,7 @@
 #include "screen.hpp"
 #include "menu.hpp"
 #include "input.hpp"
+#include "battle.hpp"
 
 
 class Game {
@@ -19,7 +20,7 @@ public:
 
     //Game(Map& gameMap) : map(gameMap), gameState(State::MENU), isRunning(true) {}
     Game() :
-        map(100, 50, 1),
+        map([this]()->void { this->StartBattle(); }, 100, 50, 1),
         menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
         gameState(State::MENU),
         isRunning(true)
@@ -37,21 +38,22 @@ public:
             map.PrintDungeon(screenBuffer);
             break;
         case State::BATTLE:
-            drawBattle();
+            battle.Draw(screenBuffer);
             break;
         }
     }
 
-	void Update() {
+	void Update(double seconds) {
 		InputHandler::Update();
 		switch (gameState) {
 		case State::MENU:
-			menu.Update();
+			menu.Update(seconds);
 			break;
 		case State::WANDERING:
-            map.Update();
+            map.Update(seconds);
 			break;
 		case State::BATTLE:
+            battle.Update(seconds);
 			break;
 		}
 	}
@@ -64,15 +66,24 @@ public:
 		isRunning = false;
 	}
 
-	void NewGame() {
-		gameState = State::WANDERING;
+    void NewGame() {
+        gameState = State::WANDERING;
 
-		map = Map(100, 50, 20);
-	}
+        map = Map([this]()->void { this->StartBattle(); }, 100, 50, 20);
+    }
+
+    void StartBattle() {
+        gameState = State::BATTLE;
+
+		battle = Battle();
+		battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
+		battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
+    }
 
 private:
     Map map;
     Menu menu;
+    Battle battle;
     State gameState;
     bool isRunning;
 

@@ -14,7 +14,7 @@ public:
 
     Menu(const std::vector<std::string>& options, const std::vector<std::function<void()>>& actions);
     void Draw(ScreenBuffer& screenBuffer);
-    void Update();
+    void Update(double seconds);
 
 private:
     enum class Option
@@ -60,7 +60,7 @@ void Menu::Draw(ScreenBuffer& screenBuffer)
     }
 }
 
-void Menu::Update()
+void Menu::Update(double seconds)
 {
     if (InputHandler::IsUpPressed() || InputHandler::IsPressed('w'))
     {
