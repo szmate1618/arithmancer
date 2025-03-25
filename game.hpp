@@ -15,6 +15,7 @@ public:
     enum class State {
         MENU,
         WANDERING,
+        ENTERING_BATTLE,
         BATTLE
     };
 
@@ -28,14 +29,16 @@ public:
     }
 
     void Draw(ScreenBuffer& screenBuffer) {
-        screenBuffer.clear();
-
         switch (gameState) {
         case State::MENU:
 			menu.Draw(screenBuffer);
             break;
         case State::WANDERING:
             map.PrintDungeon(screenBuffer);
+            break;
+        case State::ENTERING_BATTLE:
+            map.PrintDungeon(screenBuffer);
+            battle.Draw(screenBuffer);
             break;
         case State::BATTLE:
             battle.Draw(screenBuffer);
@@ -51,6 +54,9 @@ public:
 			break;
 		case State::WANDERING:
             map.Update(seconds);
+			break;
+		case State::ENTERING_BATTLE:
+            gameState = State::BATTLE;
 			break;
 		case State::BATTLE:
             battle.Update(seconds);
@@ -73,7 +79,7 @@ public:
     }
 
     void StartBattle() {
-        gameState = State::BATTLE;
+        gameState = State::ENTERING_BATTLE;
 
 		battle = Battle();
 		battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));

@@ -36,7 +36,8 @@ public:
 		{
 			for (size_t j = 0; j < screenBuffer.getWidth(); j++)
 			{
-				screenBuffer.setChar(i, j, ' ');
+				if (i == firstLine) screenBuffer.setChar(i, j, '-');
+				else screenBuffer.setChar(i, j, ' ');
 			}
 		}
 
