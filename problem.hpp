@@ -9,19 +9,23 @@
 class Problem {
 protected:
     std::string name;
-    double lifetime;
+    double timeLimit;
+    double remainingTime;
     double errorMargin;
     bool solved;
 
 public:
-    Problem(const std::string& name, double lifetime, double errorMargin)
-        : name(name), lifetime(lifetime), errorMargin(errorMargin), solved(false) {
+    Problem(const std::string& name, double timeLimit, double errorMargin)
+        : name(name), timeLimit(timeLimit), remainingTime(timeLimit), errorMargin(errorMargin), solved(false) {
     }
 
     virtual ~Problem() = default;
 
     void Update(double seconds) {
-        lifetime -= seconds;
+        remainingTime -= seconds;
+		if (remainingTime < 0) {
+            remainingTime = 0;
+		}
     }
 
     virtual double GetResult() const = 0;
@@ -40,9 +44,17 @@ public:
         }
     }
 
+	double GetTimeLimit() const {
+		return timeLimit;
+	}
+
     bool HasTimedOut() const {
-        return lifetime <= 0;
+        return remainingTime <= 0;
     }
+
+	double GetRemainingTime() const {
+		return remainingTime;
+	}
 
     bool IsSolved() const {
         return solved;
@@ -60,8 +72,8 @@ public:
 class AdditionProblem : public Problem
 {
 public:
-    AdditionProblem(double lifetime = 10, double errorMargin = 0)
-        : Problem("Additive arachnid", lifetime, errorMargin) {
+    AdditionProblem(double timeLimit = 10, double errorMargin = 0)
+        : Problem("Additive arachnid", timeLimit, errorMargin) {
 		numbers.push_back(rand() % 10);
 		numbers.push_back(rand() % 10);
     }
