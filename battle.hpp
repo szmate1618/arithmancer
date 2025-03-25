@@ -45,7 +45,7 @@ public:
 		for (size_t i = 0; i < problems.size(); i++) {
 			std::string problemHeader = std::format("{0} - error margin = {1}", problems[i]->GetName(), problems[i]->GetErrorMargin());
 			std::string problemStatement = problems[i]->GetProblemStatement() + std::string(" = ");
-			std::string remainingTime = "Remainging time: ";
+			std::string remainingTime = "Remaining time: ";
 			std::string timeBar = remainingTime;
 			size_t barMaxLength = screenBuffer.getWidth() - margin * 2 - remainingTime.length();
 			size_t barLength = static_cast<int>(problems[i]->GetRemainingTime() / problems[i]->GetTimeLimit() * barMaxLength);
