@@ -35,9 +35,11 @@ public:
 		if (playerLastSpotted > 5.0) {
 			state = State::GUARD;
 		}
+
+		TryMove();
 	}
 
-	void Move()
+	void TryMove()
 	{
 		if (moveTimer >= timeToMove) {
 			moveTimer = 0.0;
