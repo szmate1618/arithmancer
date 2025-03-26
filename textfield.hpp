@@ -36,7 +36,7 @@ public:
 	std::string GetText() const
 	{
 		return text;
-	}	
+	}
 private:
 	size_t cursorPosition;
 	//size_t maxLength;

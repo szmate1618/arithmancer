@@ -15,8 +15,8 @@ class Battle {
 private:
 	std::function<void()> endBattleCallback;
 
-    std::vector<std::unique_ptr<Problem>> problems;
-    std::vector<TextField> inputFields;
+	std::vector<std::unique_ptr<Problem>> problems;
+	std::vector<TextField> inputFields;
 	size_t currentProblemIndex;
 
 	bool HasEnded()
@@ -34,12 +34,12 @@ private:
 public:
 	Battle(std::function<void()> endBattleCallback) : endBattleCallback(endBattleCallback), currentProblemIndex(0) {}
 
-    void AddProblem(std::unique_ptr<Problem> problem) {
-        problems.push_back(std::move(problem));
+	void AddProblem(std::unique_ptr<Problem> problem) {
+		problems.push_back(std::move(problem));
 		inputFields.push_back(TextField());
-    }
+	}
 
-    void Update(double seconds) {
+	void Update(double seconds) {
 		if (InputHandler::IsUpPressed() || InputHandler::IsPressed('w'))
 		{
 			currentProblemIndex = (currentProblemIndex - 1) % inputFields.size();
@@ -74,10 +74,10 @@ public:
 		{
 			endBattleCallback();
 		}
-    }
+	}
 
 	void Draw(ScreenBuffer& screenBuffer) {
-		
+
 		size_t margin = 3;
 		size_t gap = 1;
 		size_t problemTextHeight = 3;

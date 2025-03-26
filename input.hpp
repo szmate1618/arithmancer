@@ -53,12 +53,12 @@ void InputHandler::Update()
 	{
 		isPressed.at(i) = false;
 	}
-	
+
 	/*isPressed.at('s') = true;
 	return;*/
 
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
-	
+
 	DWORD numberOfInputEvents;
 	GetNumberOfConsoleInputEvents(hInput, &numberOfInputEvents);
 	if (numberOfInputEvents <= 0) return;
