@@ -177,7 +177,7 @@ bool Map::HasLineOfSight(int x1, int y1, int x2, int y2) const {
 	return true;
 }
 
-size_t ManhattanDistance(int x1, int y1, int x2, int y2) {
+size_t Map::ManhattanDistance(int x1, int y1, int x2, int y2) const {
 	return abs(x2 - x1) + abs(y2 - y1);
 }
 
