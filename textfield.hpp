@@ -18,13 +18,17 @@ public:
 		}
 		else
 		{
-			// Numeric characters.
+			// Number characters.
 			for (char i = 0x30; i <= 0x3A; i++)
 			{
 				if (InputHandler::IsPressed(i))
 				{
 					text.push_back(i);
 				}
+			}
+			if (InputHandler::IsPressed('.') && (text.find('.') == std::string::npos))
+			{
+				text.push_back('.');
 			}
 		}
 	}
