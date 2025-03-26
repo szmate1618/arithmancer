@@ -23,6 +23,7 @@ public:
     Game() :
         map([this]()->void { this->StartBattle(); }, 100, 50, 1),
         menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
+        battle([this]()->void { this->EndBattle(); }),
         gameState(State::MENU),
         isRunning(true)
     {
@@ -79,10 +80,14 @@ public:
         map = Map([this]()->void { this->StartBattle(); }, 100, 50, 20);
     }
 
+	void EndBattle() {
+		gameState = State::WANDERING;
+    }
+
     void StartBattle() {
         gameState = State::ENTERING_BATTLE;
 
-		battle = Battle();
+		battle = Battle([this]()->void { this->EndBattle(); });
 		battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
 		battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
     }

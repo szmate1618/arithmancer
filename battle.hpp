@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <format>
+#include <functional>
 
 #include "problem.hpp"
 #include "screen.hpp"
@@ -12,12 +13,26 @@
 
 class Battle {
 private:
+	std::function<void()> endBattleCallback;
+
     std::vector<std::unique_ptr<Problem>> problems;
     std::vector<TextField> inputFields;
 	size_t currentProblemIndex;
 
+	bool HasEnded()
+	{
+		for (size_t i = 0; i < problems.size(); i++)
+		{
+			if (!problems[i]->HasTimedOut() && !problems[i]->IsSolved())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 public:
-	Battle() : currentProblemIndex(0) {}
+	Battle(std::function<void()> endBattleCallback) : endBattleCallback(endBattleCallback), currentProblemIndex(0) {}
 
     void AddProblem(std::unique_ptr<Problem> problem) {
         problems.push_back(std::move(problem));
@@ -46,6 +61,11 @@ public:
 					problems[i]->Guess(inputFields[i].GetText());
 				}
 			}
+		}
+
+		if (HasEnded())
+		{
+			endBattleCallback();
 		}
     }
 
