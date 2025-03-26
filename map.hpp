@@ -132,12 +132,11 @@ void Map::UpdateEnemies(double seconds)
 	for (EnemyEntity& enemy : enemies) {
 		enemy.agent.Update(seconds);
 
-		if (enemy.standingOn == TileType::ENEMY) {
-			std::vector<std::pair<int, int>> path = GetShortestPath(enemy.x, enemy.y, player.x, player.y);
-			if (!path.empty()) {
-				enemy.x = path[0].first;
-				enemy.y = path[0].second;
-			}
+		if (ManhattanDistance(player.x, player.y, enemy.x, enemy.y) <= 15 &&
+			HasLineOfSight(player.x, player.y, enemy.x, enemy.y))
+		{
+			enemy.agent.SpotPlayer(player.x, player.y);
+			enemy.agent.SetPath(GetShortestPath(enemy.x, enemy.y, player.x, player.y));
 		}
 	}
 }
