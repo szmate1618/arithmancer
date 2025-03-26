@@ -6,6 +6,9 @@
 #include <ctime>
 #include <algorithm>
 #include <functional>
+#include <queue>
+#include <map>
+#include <cmath>
 
 #include "screen.hpp"
 #include "input.hpp"
@@ -25,6 +28,7 @@ public:
 	bool IsWalkable(int x, int y) const;
 	void PlacePlayer(int x, int y);
 	void Update(double seconds);
+	std::vector<std::pair<int, int>> GetShortestPath(int startX, int startY, int goalX, int goalY) const;
 
 private:
 	std::function<void()> startBattleCallback;
@@ -218,4 +222,38 @@ void Map::GenerateDungeon(size_t roomCount) {
 		int gy = rooms.back().y + rooms.back().h / 2;
 		grid[gy][gx] = TileType::GOAL;
 	}
+}
+
+std::vector<std::pair<int, int>> Map::GetShortestPath(int startX, int startY, int goalX, int goalY) const {
+	struct Node {
+		int x, y, cost, heuristic;
+		bool operator>(const Node& other) const { return (cost + heuristic) > (other.cost + other.heuristic); }
+	};
+
+	std::priority_queue<Node, std::vector<Node>, std::greater<Node>> openSet;
+	std::map<std::pair<int, int>, std::pair<int, int>> cameFrom;
+	std::map<std::pair<int, int>, int> costSoFar;
+
+	auto heuristic = [](int x1, int y1, int x2, int y2) {
+		return abs(x2 - x1) + abs(y2 - y1);
+		};
+
+	openSet.push({ startX, startY, 0, heuristic(startX, startY, goalX, goalY) });
+	costSoFar[{startX, startY}] = 0;
+
+	while (!openSet.empty()) {
+		Node current = openSet.top();
+		openSet.pop();
+
+		if (current.x == goalX && current.y == goalY) {
+			std::vector<std::pair<int, int>> path;
+			while (cameFrom.count({ current.x, current.y })) {
+				path.emplace_back(current.x, current.y);
+				current = { cameFrom[{current.x, current.y}].first, cameFrom[{current.x, current.y}].second, 0, 0 };
+			}
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+	}
+	return {};
 }
