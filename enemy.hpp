@@ -3,13 +3,15 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <functional>
 
 
 class Enemy {
 public:
 	enum class State { GUARD, CHASE, PATROL };
 
-	Enemy(int x, int y) :
+	Enemy(std::function<bool(int, int)> isWalkableCallback, int x, int y) :
+		isWalkableCallback(isWalkableCallback),
 		posX(x), posY(y),
 		guardX(x), guardY(y),
 		targetX(-1), targetY(-1),
@@ -45,6 +47,7 @@ public:
 				break;
 			case State::GUARD:
 				MoveToGuardPosition();
+				break;
 			case State::PATROL:
 				break;
 			}
@@ -57,6 +60,7 @@ public:
 	}
 
 private:
+	std::function<bool(int, int)> isWalkableCallback;
 	int posX, posY;
 	int targetX, targetY;
 	int guardX, guardY;
@@ -69,17 +73,23 @@ private:
 
 	void MoveAlongPath() {
 		if (!path.empty() && pathIndex < path.size() - 1) {
-			pathIndex++;
-			posX = path[pathIndex].first;
-			posY = path[pathIndex].second;
+			int nextPathIndex = pathIndex + 1;
+			if (isWalkableCallback(path[nextPathIndex].first, path[nextPathIndex].second)) {
+				pathIndex++;
+				posX = path[pathIndex].first;
+				posY = path[pathIndex].second;
+			}
 		}
 	}
 
 	void MoveToGuardPosition() {
 		if (!path.empty() && pathIndex > 0) {
-			pathIndex--;
-			posX = path[pathIndex].first;
-			posY = path[pathIndex].second;
+			int nextPathIndex = pathIndex - 1;
+			if (isWalkableCallback(path[nextPathIndex].first, path[nextPathIndex].second)) {
+				pathIndex--;
+				posX = path[pathIndex].first;
+				posY = path[pathIndex].second;
+			}
 		}
 	}
 };

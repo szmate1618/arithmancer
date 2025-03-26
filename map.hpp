@@ -12,6 +12,7 @@
 
 #include "screen.hpp"
 #include "input.hpp"
+#include "enemy.hpp"
 
 
 class Map
@@ -23,10 +24,14 @@ public:
 		int x, y;
 		TileType standingOn;
 	};
+	struct EnemyEntity : public Entity {
+		Enemy agent;
+	};
 
 	Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount);
 	void PrintDungeon(ScreenBuffer& screenBuffer);
 	bool IsWalkable(int x, int y) const;
+	bool IsWalkableByEnemy(int x, int y) const;
 	void PlacePlayer(int x, int y);
 	void Update(double seconds);
 	std::vector<std::pair<int, int>> GetShortestPath(int startX, int startY, int goalX, int goalY) const;
@@ -38,11 +43,15 @@ private:
 	std::vector<std::vector<bool>> fogOfWar;
 	static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
 	static constexpr bool walkable[] = { false, true, true, true, true, true, true };
+	static constexpr bool walkableByEnemy[] = { false, true, true, true, true, true, false };
 	Entity player;
+	std::vector<EnemyEntity> enemies;
 
 	struct Room {
 		int x, y, w, h;
 	};
+
+	void UpdateEnemies(double seconds);
 
 	void GenerateDungeon(size_t roomCount);
 	void RevealArea();
@@ -78,6 +87,11 @@ bool Map::IsWalkable(int x, int y) const {
 	return walkable[static_cast<int>(grid[y][x])];
 }
 
+bool Map::IsWalkableByEnemy(int x, int y) const {
+	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return false;
+	return walkableByEnemy[static_cast<int>(grid[y][x])];
+}
+
 void Map::PlacePlayer(int x, int y) {
 	if (IsWalkable(x, y)) {
 		player.x = x;
@@ -108,6 +122,21 @@ void Map::Update(double seconds)
 		}
 		if (player.standingOn == TileType::ENEMY) {
 			startBattleCallback();
+		}
+	}
+}
+
+void Map::UpdateEnemies(double seconds)
+{
+	for (EnemyEntity& enemy : enemies) {
+		enemy.agent.Update(seconds);
+
+		if (enemy.standingOn == TileType::ENEMY) {
+			std::vector<std::pair<int, int>> path = GetShortestPath(enemy.x, enemy.y, player.x, player.y);
+			if (!path.empty()) {
+				enemy.x = path[0].first;
+				enemy.y = path[0].second;
+			}
 		}
 	}
 }
@@ -151,6 +180,8 @@ bool Map::HasLineOfSight(int x1, int y1, int x2, int y2) const {
 void Map::GenerateDungeon(size_t roomCount) {
 	std::vector<Room> rooms;
 	srand(time(0));
+
+	enemies = {};
 
 	// Place rooms
 	for (int i = 0; i < roomCount; ++i) {
@@ -210,7 +241,12 @@ void Map::GenerateDungeon(size_t roomCount) {
 	for (int y = 0; y < HEIGHT; ++y)
 		for (int x = 0; x < WIDTH; ++x)
 			if (grid[y][x] == TileType::FLOOR)
-				if (rand() % 100 == 0) grid[y][x] = TileType::ENEMY;
+				if (rand() % 100 == 0) {
+					grid[y][x] = TileType::ENEMY;
+					enemies.push_back({ x, y, TileType::FLOOR,
+						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y) }
+					);
+				}
 
 	// Set START and GOAL positions
 	if (!rooms.empty()) {
