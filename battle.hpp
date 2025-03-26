@@ -6,21 +6,47 @@
 
 #include "problem.hpp"
 #include "screen.hpp"
+#include "textfield.hpp"
+#include "input.hpp"
 
 
 class Battle {
 private:
     std::vector<std::unique_ptr<Problem>> problems;
+    std::vector<TextField> inputFields;
+	size_t currentProblemIndex;
 
 public:
+	Battle() : currentProblemIndex(0) {}
+
     void AddProblem(std::unique_ptr<Problem> problem) {
         problems.push_back(std::move(problem));
+		inputFields.push_back(TextField());
     }
 
     void Update(double seconds) {
-        for (auto& problem : problems) {
-            problem->Update(seconds);
-        }
+		if (InputHandler::IsUpPressed() || InputHandler::IsPressed('w'))
+		{
+			currentProblemIndex = (currentProblemIndex - 1) % inputFields.size();
+		}
+		if (InputHandler::IsDownPressed() || InputHandler::IsPressed('s'))
+		{
+			currentProblemIndex = (currentProblemIndex + 1) % inputFields.size();
+		}
+
+		for (size_t i = 0; i < problems.size(); i++)
+		{
+			problems[i]->Update(seconds);
+			if (i == currentProblemIndex)
+			{
+				inputFields[i].Update(seconds);
+
+				if (InputHandler::IsPressed(VK_RETURN))
+				{
+					problems[i]->Guess(inputFields[i].GetText());
+				}
+			}
+		}
     }
 
 	void Draw(ScreenBuffer& screenBuffer) {
@@ -60,6 +86,10 @@ public:
 			for (size_t j = 0; j < problemStatement.length(); j++)
 			{
 				screenBuffer.setChar(currentLine, margin + j, problemStatement[j]);
+			}
+			for (size_t j = 0; j < inputFields[i].GetText().length(); j++)
+			{
+				screenBuffer.setChar(currentLine, margin + j + problemStatement.length(), inputFields[i].GetText()[j]);
 			}
 			currentLine++;
 

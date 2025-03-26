@@ -74,8 +74,8 @@ void InputHandler::Update()
 		{
 			int keyCode = inputRecord[i].Event.KeyEvent.wVirtualKeyCode;
 
-			// 0x41 is the Windows virtual keycode for key A, 0x61 is the ASCII code for the character 'a'.
-			if (keyCode > 0x41) keyCode = keyCode - 0x41 + 0x61;
+			// 0x30 is the Windows virtual keycode for number key 0.
+			if (keyCode > 0x30) keyCode = inputRecord[i].Event.KeyEvent.uChar.AsciiChar;
 
 			isPressed.at(keyCode) = true;
 		}

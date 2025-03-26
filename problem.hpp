@@ -22,10 +22,13 @@ public:
     virtual ~Problem() = default;
 
     void Update(double seconds) {
-        remainingTime -= seconds;
-		if (remainingTime < 0) {
-            remainingTime = 0;
-		}
+        if (!solved)
+        {
+            remainingTime -= seconds;
+            if (remainingTime < 0) {
+                remainingTime = 0;
+            }
+        }
     }
 
     virtual double GetResult() const = 0;

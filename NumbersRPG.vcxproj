@@ -141,6 +141,7 @@
     <ClInclude Include="menu.hpp" />
     <ClInclude Include="problem.hpp" />
     <ClInclude Include="screen.hpp" />
+    <ClInclude Include="textfield.hpp" />
     <ClInclude Include="windowing.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
