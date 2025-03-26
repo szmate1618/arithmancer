@@ -71,12 +71,12 @@ public:
 
 	void Draw(ScreenBuffer& screenBuffer) {
 		
-		size_t margin = 1;
+		size_t margin = 3;
 		size_t gap = 1;
 		size_t problemTextHeight = 3;
-		size_t height = problems.size() * (problemTextHeight + gap) + margin;
+		size_t height = problems.size() * (problemTextHeight + gap) + gap;
 
-		size_t firstLine = screenBuffer.getHeight() - 1 - height;
+		size_t firstLine = screenBuffer.getHeight() - height;
 
 		for (size_t i = firstLine; i < screenBuffer.getHeight(); i++)
 		{
@@ -87,7 +87,7 @@ public:
 			}
 		}
 
-		size_t currentLine = firstLine + margin;
+		size_t currentLine = firstLine + gap;
 		for (size_t i = 0; i < problems.size(); i++) {
 			std::string problemHeader = std::format("{0} - error margin = {1}", problems[i]->GetName(), problems[i]->GetErrorMargin());
 			std::string problemStatement = problems[i]->GetProblemStatement() + std::string(" = ");
@@ -103,6 +103,10 @@ public:
 			}
 			currentLine++;
 
+			if (i == currentProblemIndex)
+			{
+				screenBuffer.setChar(currentLine, margin - 2, '>');
+			}
 			for (size_t j = 0; j < problemStatement.length(); j++)
 			{
 				screenBuffer.setChar(currentLine, margin + j, problemStatement[j]);
