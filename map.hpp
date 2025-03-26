@@ -56,6 +56,7 @@ private:
 	void GenerateDungeon(size_t roomCount);
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
+	size_t ManhattanDistance(int x1, int y1, int x2, int y2) const;
 };
 
 Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount) :
@@ -176,6 +177,11 @@ bool Map::HasLineOfSight(int x1, int y1, int x2, int y2) const {
 	}
 	return true;
 }
+
+size_t ManhattanDistance(int x1, int y1, int x2, int y2) {
+	return abs(x2 - x1) + abs(y2 - y1);
+}
+
 // Dungeon generation function
 void Map::GenerateDungeon(size_t roomCount) {
 	std::vector<Room> rooms;
