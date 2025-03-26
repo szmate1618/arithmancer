@@ -47,5 +47,8 @@
     <ClInclude Include="textfield.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="enemy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
