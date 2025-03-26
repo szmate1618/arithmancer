@@ -10,7 +10,6 @@
 #include "screen.hpp"
 #include "input.hpp"
 
-
 class Map
 {
 public:
@@ -31,6 +30,7 @@ private:
     std::function<void()> startBattleCallback;
     size_t WIDTH, HEIGHT;
     std::vector<std::vector<TileType>> grid;
+    std::vector<std::vector<bool>> fogOfWar;
     static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
     static constexpr bool walkable[] = { false, true, true, true, true, true, true };
     Player player;
@@ -40,70 +40,107 @@ private:
     };
 
     void GenerateDungeon(size_t roomCount);
+    void RevealArea();
+    bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
 };
 
 Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount) :
     startBattleCallback(startBattleCallback),
     WIDTH(width),
     HEIGHT(height),
-    grid(height, std::vector<TileType>(width, TileType::WALL))
+    grid(height, std::vector<TileType>(width, TileType::WALL)),
+    fogOfWar(height, std::vector<bool>(width, true))
 {
     GenerateDungeon(roomCount);
 }
 
-// Print the dungeon
 void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
-    for (size_t i = 0; i < grid.size(); i++)
-    {
-        for (size_t j = 0; j < grid.at(i).size(); j++)
-        {
-			screenBuffer.setChar(i, j, tileChars[static_cast<int>(grid.at(i).at(j))]);
+    for (size_t i = 0; i < grid.size(); i++) {
+        for (size_t j = 0; j < grid.at(i).size(); j++) {
+            if (fogOfWar[i][j] && (grid[i][j] == TileType::FLOOR || grid[i][j] == TileType::EMPTY || grid[i][j] == TileType::ENEMY)) {
+                screenBuffer.setChar(i, j, '.');
+            } else {
+                screenBuffer.setChar(i, j, tileChars[static_cast<int>(grid.at(i).at(j))]);
+            }
         }
     }
     screenBuffer.setChar(player.y, player.x, tileChars[static_cast<int>(TileType::PLAYER)]);
 }
 
-// Check if a position is walkable
 bool Map::IsWalkable(int x, int y) const {
     if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return false;
     return walkable[static_cast<int>(grid[y][x])];
 }
 
-// Place the player on a walkable tile
 void Map::PlacePlayer(int x, int y) {
-    if (IsWalkable(x, y)) {  // TODO: Maybe this is redundant?
+    if (IsWalkable(x, y)) {
         player.x = x;
         player.y = y;
         player.standingOn = grid[y][x];
-        //grid[y][x] = TileType::PLAYER;
+        RevealArea();
     }
 }
 
 void Map::Update(double seconds)
 {
-	int dx = 0, dy = 0;
-	if (InputHandler::IsUpPressed()) dy = -1;
-	if (InputHandler::IsDownPressed()) dy = 1;
-	if (InputHandler::IsLeftPressed()) dx = -1;
-	if (InputHandler::IsRightPressed()) dx = 1;
-	if (dx != 0 || dy != 0) {
-		int newX = player.x + dx;
-		int newY = player.y + dy;
-		if (IsWalkable(newX, newY)) {
-			PlacePlayer(newX, newY);
-		}
+    int dx = 0, dy = 0;
+    if (InputHandler::IsUpPressed()) dy = -1;
+    if (InputHandler::IsDownPressed()) dy = 1;
+    if (InputHandler::IsLeftPressed()) dx = -1;
+    if (InputHandler::IsRightPressed()) dx = 1;
+    if (dx != 0 || dy != 0) {
+        int newX = player.x + dx;
+        int newY = player.y + dy;
+        if (IsWalkable(newX, newY)) {
+            PlacePlayer(newX, newY);
+        }
         else if (IsWalkable(newX, player.y)) {
             PlacePlayer(newX, player.y);
         }
         else if (IsWalkable(player.x, newY)) {
             PlacePlayer(player.x, newY);
         }
-		if (player.standingOn == TileType::ENEMY) {
-			startBattleCallback();
-		}
-	}
+        if (player.standingOn == TileType::ENEMY) {
+            startBattleCallback();
+        }
+    }
 }
 
+void Map::RevealArea() {
+    int radius = 5;
+    for (int dy = -radius; dy <= radius; ++dy) {
+        for (int dx = -radius; dx <= radius; ++dx) {
+            int nx = player.x + dx;
+            int ny = player.y + dy;
+            if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT) {
+                if (HasLineOfSight(player.x, player.y, nx, ny)) {
+                    fogOfWar[ny][nx] = false;
+                }
+            }
+        }
+    }
+}
+
+bool Map::HasLineOfSight(int x1, int y1, int x2, int y2) const {
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+    while (x1 != x2 || y1 != y2) {
+        if (grid[y1][x1] == TileType::WALL) return false;
+        int e2 = err * 2;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
+    return true;
+}
 // Dungeon generation function
 void Map::GenerateDungeon(size_t roomCount) {
     std::vector<Room> rooms;
@@ -167,8 +204,8 @@ void Map::GenerateDungeon(size_t roomCount) {
     for (int y = 0; y < HEIGHT; ++y)
         for (int x = 0; x < WIDTH; ++x)
             if (grid[y][x] == TileType::FLOOR)
-                if (rand()%100 == 0) grid[y][x] = TileType::ENEMY;
-                
+                if (rand() % 100 == 0) grid[y][x] = TileType::ENEMY;
+
     // Set START and GOAL positions
     if (!rooms.empty()) {
         int sx = rooms.front().x + rooms.front().w / 2;
