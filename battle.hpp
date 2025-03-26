@@ -51,14 +51,21 @@ public:
 
 		for (size_t i = 0; i < problems.size(); i++)
 		{
-			problems[i]->Update(seconds);
-			if (i == currentProblemIndex)
+			if (!problems[i]->IsSolved())
 			{
-				inputFields[i].Update(seconds);
-
-				if (InputHandler::IsPressed(VK_RETURN))
+				problems[i]->Update(seconds);
+				if (i == currentProblemIndex)
 				{
-					problems[i]->Guess(inputFields[i].GetText());
+					inputFields[i].Update(seconds);
+
+					if (InputHandler::IsPressed(VK_RETURN))
+					{
+						problems[i]->Guess(inputFields[i].GetText());
+						if (problems[i]->IsSolved())
+						{
+							currentProblemIndex = (currentProblemIndex + 1) % inputFields.size();
+						}
+					}
 				}
 			}
 		}
