@@ -19,7 +19,7 @@ class Map
 public:
 	enum class TileType { WALL, FLOOR, START, GOAL, EMPTY, PLAYER, ENEMY };
 
-	struct Player {
+	struct Entity {
 		int x, y;
 		TileType standingOn;
 	};
@@ -38,7 +38,7 @@ private:
 	std::vector<std::vector<bool>> fogOfWar;
 	static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
 	static constexpr bool walkable[] = { false, true, true, true, true, true, true };
-	Player player;
+	Entity player;
 
 	struct Room {
 		int x, y, w, h;
