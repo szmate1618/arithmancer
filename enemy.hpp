@@ -61,6 +61,10 @@ public:
 		pathIndex = 0;
 	}
 
+	std::pair<int, int> GetPosition() const {
+		return { posX, posY };
+	}
+
 private:
 	std::function<bool(int, int)> isWalkableCallback;
 	int posX, posY;
