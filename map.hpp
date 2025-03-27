@@ -36,6 +36,10 @@ public:
 	void Update(double seconds);
 	std::vector<std::pair<int, int>> GetShortestPath(int startX, int startY, int goalX, int goalY) const;
 
+	// After this function is called, the Map object cannot be copied,
+	// because the enemies are initialized with callbacks to member functions through the this pointer.
+	void GenerateDungeon(size_t roomCount);
+
 private:
 	std::function<void()> startBattleCallback;
 	size_t WIDTH, HEIGHT;
@@ -53,7 +57,6 @@ private:
 
 	void UpdateEnemies(double seconds);
 
-	void GenerateDungeon(size_t roomCount);
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
 	size_t ManhattanDistance(int x1, int y1, int x2, int y2) const;
@@ -66,7 +69,6 @@ Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t 
 	grid(height, std::vector<TileType>(width, TileType::WALL)),
 	fogOfWar(height, std::vector<bool>(width, true))
 {
-	GenerateDungeon(roomCount);
 }
 
 void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
@@ -125,6 +127,8 @@ void Map::Update(double seconds)
 			startBattleCallback();
 		}
 	}
+
+	UpdateEnemies(seconds);
 }
 
 void Map::UpdateEnemies(double seconds)
@@ -249,8 +253,8 @@ void Map::GenerateDungeon(size_t roomCount) {
 				if (rand() % 100 == 0) {
 					grid[y][x] = TileType::ENEMY;
 					enemies.push_back({ x, y, TileType::FLOOR,
-						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y) }
-					);
+						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
+						});
 				}
 
 	// Set START and GOAL positions
@@ -295,6 +299,23 @@ std::vector<std::pair<int, int>> Map::GetShortestPath(int startX, int startY, in
 			}
 			std::reverse(path.begin(), path.end());
 			return path;
+		}
+
+		for (int dy = -1; dy <= 1; ++dy) {
+			for (int dx = -1; dx <= 1; ++dx) {
+				if (dx == 0 && dy == 0) continue;
+				int nx = current.x + dx;
+				int ny = current.y + dy;
+				if (nx < 0 || nx >= WIDTH || ny < 0 || ny >= HEIGHT) continue;
+				if (!IsWalkable(nx, ny)) continue;
+				int newCost = costSoFar[{current.x, current.y}] + 1;
+				if (!costSoFar.count({ nx, ny }) || newCost < costSoFar[{nx, ny}]) {
+					costSoFar[{nx, ny}] = newCost;
+					int priority = newCost + heuristic(nx, ny, goalX, goalY);
+					openSet.push({ nx, ny, newCost, priority });
+					cameFrom[{nx, ny}] = { current.x, current.y };
+				}
+			}
 		}
 	}
 	return {};

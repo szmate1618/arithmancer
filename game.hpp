@@ -78,6 +78,7 @@ public:
 		gameState = State::WANDERING;
 
 		map = Map([this]()->void { this->StartBattle(); }, 100, 50, 20);
+		map.GenerateDungeon(20);
 	}
 
 	void EndBattle() {
