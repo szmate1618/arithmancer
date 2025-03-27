@@ -135,6 +135,15 @@ void Map::UpdateEnemies(double seconds)
 {
 	for (EnemyEntity& enemy : enemies) {
 		enemy.agent.Update(seconds);
+		std::pair<int, int> pos = enemy.agent.GetPosition();
+		if (pos.first != enemy.x || pos.second != enemy.y) {
+			// TODO: Move this to a separate function.
+			grid[enemy.y][enemy.x] = enemy.standingOn;
+			enemy.x = pos.first;
+			enemy.y = pos.second;
+			enemy.standingOn = grid[enemy.y][enemy.x];
+			grid[enemy.y][enemy.x] = TileType::ENEMY;
+		}
 
 		if (ManhattanDistance(player.x, player.y, enemy.x, enemy.y) <= 15 &&
 			HasLineOfSight(player.x, player.y, enemy.x, enemy.y))
