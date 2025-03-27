@@ -306,6 +306,7 @@ std::vector<std::pair<int, int>> Map::GetShortestPath(int startX, int startY, in
 				path.emplace_back(current.x, current.y);
 				current = { cameFrom[{current.x, current.y}].first, cameFrom[{current.x, current.y}].second, 0, 0 };
 			}
+			path.emplace_back(startX, startY);
 			std::reverse(path.begin(), path.end());
 			return path;
 		}
