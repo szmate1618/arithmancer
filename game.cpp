@@ -7,10 +7,9 @@
 
 
 Game::Game() :
-	map([this]()->void { this->StartBattle(); }, 100, 50, 1),
 	menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
-	battle([this]()->void { this->EndBattle(); }),
 	gameState(State::MENU),
+	quest(nullptr),
 	isRunning(true)
 {
 }
@@ -20,15 +19,8 @@ void Game::Draw(ScreenBuffer& screenBuffer) {
 	case State::MENU:
 		menu.Draw(screenBuffer);
 		break;
-	case State::WANDERING:
-		map.PrintDungeon(screenBuffer);
-		break;
-	case State::ENTERING_BATTLE:
-		map.PrintDungeon(screenBuffer);
-		battle.Draw(screenBuffer);
-		break;
-	case State::BATTLE:
-		battle.Draw(screenBuffer);
+	case State::QUEST_RUNNING:
+		quest->Draw(screenBuffer);
 		break;
 	}
 }
@@ -39,15 +31,8 @@ void Game::Update(double seconds) {
 	case State::MENU:
 		menu.Update(seconds);
 		break;
-	case State::WANDERING:
-		map.Update(seconds);
-		break;
-	case State::ENTERING_BATTLE:
-		gameState = State::BATTLE;
-		battle.Update(seconds);
-		break;
-	case State::BATTLE:
-		battle.Update(seconds);
+	case State::QUEST_RUNNING:
+		quest->Update(seconds);
 		break;
 	}
 }
@@ -61,20 +46,8 @@ void Game::Quit() {
 }
 
 void Game::NewGame() {
-	gameState = State::WANDERING;
+	gameState = State::QUEST_RUNNING;
 
-	map = Map([this]()->void { this->StartBattle(); }, 100, 50, 20);
-	map.GenerateDungeon(20);
-}
-
-void Game::EndBattle() {
-	gameState = State::WANDERING;
-}
-
-void Game::StartBattle() {
-	gameState = State::ENTERING_BATTLE;
-
-	battle = Battle([this]()->void { this->EndBattle(); });
-	battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
-	battle.AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
+	// TODO: Find out why using std::make_unique here results in a copy call.
+	quest = std::unique_ptr<Quest>(new Quest(*this));
 }

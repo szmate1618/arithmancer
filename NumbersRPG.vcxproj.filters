@@ -33,6 +33,9 @@
     <ClCompile Include="stringutils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="quest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windowing.hpp">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stringutils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quest.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

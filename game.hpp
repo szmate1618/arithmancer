@@ -1,19 +1,20 @@
 #pragma once
 
+#include <memory>
+
 #include "map.hpp"
 #include "screen.hpp"
 #include "menu.hpp"
 #include "input.hpp"
 #include "battle.hpp"
+#include "quest.hpp"
 
 
 class Game {
 public:
 	enum class State {
 		MENU,
-		WANDERING,
-		ENTERING_BATTLE,
-		BATTLE
+		QUEST_RUNNING
 	};
 
 	Game();
@@ -22,13 +23,10 @@ public:
 	bool IsRunning() const;
 	void Quit();
 	void NewGame();
-	void EndBattle();
-	void StartBattle();
 
 private:
-	Map map;
 	Menu menu;
-	Battle battle;
+	std::unique_ptr<Quest> quest;
 	State gameState;
 	bool isRunning;
 };
