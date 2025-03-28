@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+#include "stringutils.hpp"
+
 
 class ScreenBuffer {
 private:
@@ -45,11 +47,6 @@ public:
 
 	void Display() const
 	{
-		for (size_t i = 0; i < buffer.size(); i++)
-		{
-			const auto& row = buffer.at(i);
-			printf("%s", row.c_str());
-			if (i != buffer.size() - 1) printf("\n");
-		}
+		printf("%s", join(buffer, "\r\n").c_str());
 	}
 };
