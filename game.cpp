@@ -48,6 +48,5 @@ void Game::Quit() {
 void Game::NewGame() {
 	gameState = State::QUEST_RUNNING;
 
-	// TODO: Find out why using std::make_unique here results in a copy call.
-	quest = std::unique_ptr<Quest>(new Quest(*this));
+	quest = std::make_unique<Quest>(*this);
 }
