@@ -16,7 +16,7 @@ public:
 		guardX(x), guardY(y),
 		targetX(-1), targetY(-1),
 		state(State::GUARD),
-		playerLastSpotted(5.0), moveTimer(0.0), timeToMove(1.0),
+		playerLastSpotted(5.0), moveTimer(0.0), timeToMove(0.2),
 		pathIndex(0)
 	{
 	}
