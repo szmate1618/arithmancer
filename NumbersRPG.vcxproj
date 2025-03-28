@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="stringutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="battle.hpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="menu.hpp" />
     <ClInclude Include="problem.hpp" />
     <ClInclude Include="screen.hpp" />
+    <ClInclude Include="stringutils.hpp" />
     <ClInclude Include="textfield.hpp" />
     <ClInclude Include="windowing.hpp" />
   </ItemGroup>
