@@ -9,6 +9,7 @@
 #include <queue>
 #include <map>
 #include <cmath>
+#include <sstream>
 
 #include "input.hpp"
 #include "screen.hpp"
@@ -85,6 +86,11 @@ void Map::Update(double seconds)
 	UpdateEnemies(seconds);
 }
 
+void Map::Reset()
+{
+	enemies = {};
+}
+
 void Map::UpdateEnemies(double seconds)
 {
 	for (EnemyEntity& enemy : enemies) {
@@ -150,10 +156,10 @@ size_t Map::ManhattanDistance(int x1, int y1, int x2, int y2) const {
 
 // Dungeon generation function
 void Map::GenerateDungeon(size_t roomCount) {
+	Reset();
+
 	std::vector<Room> rooms;
 	srand(time(0));
-
-	enemies = {};
 
 	// Place rooms
 	for (int i = 0; i < roomCount; ++i) {
@@ -217,7 +223,7 @@ void Map::GenerateDungeon(size_t roomCount) {
 					grid[y][x] = TileType::ENEMY;
 					enemies.push_back({ x, y, TileType::FLOOR,
 						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
-						});
+					});
 				}
 
 	// Set START and GOAL positions
@@ -283,4 +289,38 @@ std::vector<std::pair<int, int>> Map::GetShortestPath(int startX, int startY, in
 		}
 	}
 	return {};
+}
+
+void Map::LoadFromString(const std::string& mapString) {
+	Reset();
+
+	std::istringstream stream(mapString);
+	std::string line;
+	std::vector<std::string> lines;
+	while (std::getline(stream, line)) {
+		lines.push_back(line);
+	}
+	HEIGHT = lines.size();
+	WIDTH = lines.empty() ? 0 : lines[0].size();
+	grid.resize(HEIGHT, std::vector<TileType>(WIDTH, TileType::WALL));
+
+	for (int y = 0; y < static_cast<int>(HEIGHT); ++y) {
+		for (int x = 0; x < static_cast<int>(WIDTH); ++x) {
+			if (x < static_cast<int>(lines[y].size())) {
+				auto it = std::find(std::begin(tileChars), std::end(tileChars), lines[y][x]);
+				if (it != std::end(tileChars)) {
+					TileType tileType = static_cast<TileType>(std::distance(std::begin(tileChars), it));
+					grid[y][x] = tileType;
+					if (tileType == TileType::START || tileType == TileType::PLAYER) {
+						PlacePlayer(x, y);
+					}
+					if (tileType == TileType::ENEMY) {
+						enemies.push_back({ x, y, TileType::FLOOR,
+							Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
+						});
+					}
+				}
+			}
+		}
+	}
 }

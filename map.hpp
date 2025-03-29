@@ -31,6 +31,7 @@ public:
 	// After this function is called, the Map object cannot be copied,
 	// because the enemies are initialized with callbacks to member functions through the this pointer.
 	void GenerateDungeon(size_t roomCount);
+	void LoadFromString(const std::string& mapString);
 
 private:
 	std::function<void()> startBattleCallback;
@@ -46,6 +47,8 @@ private:
 	struct Room {
 		int x, y, w, h;
 	};
+
+	void Reset();
 
 	void UpdateEnemies(double seconds);
 
