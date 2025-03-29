@@ -10,7 +10,7 @@
 class Map
 {
 public:
-	enum class TileType { WALL, FLOOR, START, GOAL, EMPTY, PLAYER, ENEMY };
+	enum class TileType { WALL, FLOOR, WATER, LAVA, START, GOAL, EMPTY, PLAYER, ENEMY };
 
 	struct Entity {
 		int x, y;
@@ -38,9 +38,9 @@ private:
 	size_t WIDTH, HEIGHT;
 	std::vector<std::vector<TileType>> grid;
 	std::vector<std::vector<bool>> fogOfWar;
-	static constexpr char tileChars[] = { '#', ' ', 'S', 'G', '.', '@', '*' };
-	static constexpr bool walkable[] = { false, true, true, true, true, true, true };
-	static constexpr bool walkableByEnemy[] = { false, true, true, true, true, true, false };
+	static constexpr char tileChars[] = { '#', ' ', '~', '~', 'S', 'G', '.', '@', '*' };
+	static constexpr bool walkable[] = { false, true, false, false, true, true, true, true, true };
+	static constexpr bool walkableByEnemy[] = { false, true,  false, false, true, true, true, true, false };
 	Entity player;
 	std::vector<EnemyEntity> enemies;
 
