@@ -74,5 +74,8 @@
     <ClInclude Include="quest.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="debugmaps.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
