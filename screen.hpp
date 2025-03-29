@@ -9,20 +9,20 @@
 class ScreenBuffer {
 private:
 	std::vector<std::string> buffer;
-	int width;
-	int height;
+	size_t width;
+	size_t height;
 
 public:
 	// Constructor
-	ScreenBuffer(int w, int h) : width(w), height(h), buffer(h, std::string(w, ' ')) {}
+	ScreenBuffer(size_t w, size_t h) : width(w), height(h), buffer(h, std::string(w, ' ')) {}
 
 	// Getter for width
-	int getWidth() const {
+	size_t getWidth() const {
 		return width;
 	}
 
 	// Getter for height
-	int getHeight() const {
+	size_t getHeight() const {
 		return height;
 	}
 

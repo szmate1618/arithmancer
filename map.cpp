@@ -27,8 +27,8 @@ Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t 
 }
 
 void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
-	for (size_t i = 0; i < grid.size(); i++) {
-		for (size_t j = 0; j < grid.at(i).size(); j++) {
+	for (size_t i = 0; i < std::min(grid.size(), screenBuffer.getHeight()); i++) {
+		for (size_t j = 0; j < std::min(grid.at(i).size(), screenBuffer.getWidth()); j++) {
 			if (fogOfWar[i][j] && (grid[i][j] == TileType::FLOOR || grid[i][j] == TileType::EMPTY || grid[i][j] == TileType::ENEMY)) {
 				screenBuffer.setChar(i, j, '.');
 			}
@@ -37,7 +37,9 @@ void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
 			}
 		}
 	}
-	screenBuffer.setChar(player.y, player.x, tileChars[static_cast<int>(TileType::PLAYER)]);
+	if (player.x >= 0 && player.x < screenBuffer.getWidth() && player.y >= 0 && player.y < screenBuffer.getHeight()) {
+		screenBuffer.setChar(player.y, player.x, tileChars[static_cast<int>(TileType::PLAYER)]);
+	}
 }
 
 bool Map::IsWalkable(int x, int y) const {
@@ -223,7 +225,7 @@ void Map::GenerateDungeon(size_t roomCount) {
 					grid[y][x] = TileType::ENEMY;
 					enemies.push_back({ x, y, TileType::FLOOR,
 						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
-					});
+						});
 				}
 
 	// Set START and GOAL positions
@@ -302,7 +304,8 @@ void Map::LoadFromString(const std::string& mapString) {
 	}
 	HEIGHT = lines.size();
 	WIDTH = lines.empty() ? 0 : lines[0].size();
-	grid.resize(HEIGHT, std::vector<TileType>(WIDTH, TileType::WALL));
+	grid = std::vector<std::vector<TileType>>(HEIGHT, std::vector<TileType>(WIDTH, TileType::WALL));
+	fogOfWar = std::vector<std::vector<bool>>(HEIGHT, std::vector<bool>(WIDTH, true));
 
 	for (int y = 0; y < static_cast<int>(HEIGHT); ++y) {
 		for (int x = 0; x < static_cast<int>(WIDTH); ++x) {
@@ -317,7 +320,7 @@ void Map::LoadFromString(const std::string& mapString) {
 					if (tileType == TileType::ENEMY) {
 						enemies.push_back({ x, y, TileType::FLOOR,
 							Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
-						});
+							});
 					}
 				}
 			}

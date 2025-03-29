@@ -1,10 +1,13 @@
+#include "debugmaps.hpp"
+
 #include "quest.hpp"
 
 
 Quest::Quest(Game& game) : game(game), state(State::WANDERING), map(nullptr), battle(nullptr)
 {
 	map = std::make_unique<Map>([this]()->void { this->StartBattle(); }, 100, 50, 20);
-	map->GenerateDungeon(20);
+	//map->GenerateDungeon(20);
+	map->LoadFromString(debugMap02);
 }
 
 void Quest::Draw(ScreenBuffer& screenBuffer)
