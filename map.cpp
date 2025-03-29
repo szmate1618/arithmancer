@@ -107,7 +107,7 @@ void Map::Update(double seconds)
 			// Mark the enemy as inactive, so that it will be removed after the battle.
 			enemy.isActive = false;
 			startBattleCallback();
-			break;
+			break;  // TODO: Figure out if this really is needed.
 		}
 	}
 }
