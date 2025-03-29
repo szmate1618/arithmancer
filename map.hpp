@@ -19,6 +19,7 @@ public:
 	struct Entity {
 		int x, y;
 		TileType standingOn;
+		bool isActive = true;
 	};
 	struct EnemyEntity : public Entity {
 		Enemy agent;
@@ -56,6 +57,7 @@ private:
 	void Reset();
 
 	void UpdateEnemies(double seconds);
+	void RemoveInactiveEnemies();
 
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;

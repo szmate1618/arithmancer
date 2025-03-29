@@ -79,6 +79,8 @@ void Map::PlacePlayer(int x, int y) {
 
 void Map::Update(double seconds)
 {
+	RemoveInactiveEnemies();
+
 	int dx = 0, dy = 0;
 	if (InputHandler::IsUpPressed()) dy = -1;
 	if (InputHandler::IsDownPressed()) dy = 1;
@@ -96,12 +98,18 @@ void Map::Update(double seconds)
 		else if (IsWalkable(player.x, newY)) {
 			PlacePlayer(player.x, newY);
 		}
-		if (player.standingOn == TileType::ENEMY) {
-			startBattleCallback();
-		}
 	}
 
 	UpdateEnemies(seconds);
+
+	for (EnemyEntity& enemy : enemies) {
+		if (enemy.x == player.x && enemy.y == player.y) {
+			// Mark the enemy as inactive, so that it will be removed after the battle.
+			enemy.isActive = false;
+			startBattleCallback();
+			break;
+		}
+	}
 }
 
 void Map::Reset()
@@ -130,6 +138,15 @@ void Map::UpdateEnemies(double seconds)
 			enemy.agent.SetPath(GetShortestPath(enemy.x, enemy.y, player.x, player.y));
 		}
 	}
+}
+
+void Map::RemoveInactiveEnemies() {
+	for (EnemyEntity& enemy : enemies) {
+		if (!enemy.isActive) {
+			grid[enemy.y][enemy.x] = enemy.standingOn;
+		}
+	}
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](const EnemyEntity& enemy) { return !enemy.isActive; }), enemies.end());
 }
 
 void Map::RevealArea() {
@@ -239,7 +256,7 @@ void Map::GenerateDungeon(size_t roomCount) {
 			if (grid[y][x] == TileType::FLOOR)
 				if (rand() % 100 == 0) {
 					grid[y][x] = TileType::ENEMY;
-					enemies.push_back({ x, y, TileType::FLOOR,
+					enemies.push_back({ x, y, TileType::FLOOR, true,
 						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
 						});
 				}
@@ -334,7 +351,7 @@ void Map::LoadFromString(const std::string& mapString) {
 						PlacePlayer(x, y);
 					}
 					if (tileType == TileType::ENEMY) {
-						enemies.push_back({ x, y, TileType::FLOOR,
+						enemies.push_back({ x, y, TileType::FLOOR, true,
 							Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
 							});
 					}
