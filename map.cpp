@@ -27,18 +27,28 @@ Map::Map(const std::function<void()>& startBattleCallback, size_t width, size_t 
 }
 
 void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
-	for (size_t i = 0; i < std::min(grid.size(), screenBuffer.getHeight()); i++) {
-		for (size_t j = 0; j < std::min(grid.at(i).size(), screenBuffer.getWidth()); j++) {
-			if (fogOfWar[i][j] && (grid[i][j] == TileType::FLOOR || grid[i][j] == TileType::EMPTY || grid[i][j] == TileType::ENEMY)) {
-				screenBuffer.setChar(i, j, '.');
-			}
-			else {
-				screenBuffer.setChar(i, j, tileChars[static_cast<int>(grid.at(i).at(j))]);
+	size_t cameraDiffX = -camera.x + screenBuffer.getWidth() / 2;
+	size_t cameraDiffY = -camera.y + screenBuffer.getHeight() / 2;
+
+	for (size_t i = 0; i < screenBuffer.getHeight(); i++) {
+		for (size_t j = 0; j < screenBuffer.getWidth(); j++) {
+			size_t i2 = i - cameraDiffY;
+			size_t j2 = j - cameraDiffX;
+			if (i2 >= 0 && i2 < grid.size() && j2 >= 0 && j2 < grid.at(i2).size()) {
+				if (fogOfWar[i2][j2] && (grid[i2][j2] == TileType::FLOOR || grid[i2][j2] == TileType::EMPTY || grid[i2][j2] == TileType::ENEMY)) {
+					screenBuffer.setChar(i, j, '.');
+				}
+				else {
+					screenBuffer.setChar(i, j, tileChars[static_cast<int>(grid.at(i2).at(j2))]);
+				}
 			}
 		}
 	}
-	if (player.x >= 0 && player.x < screenBuffer.getWidth() && player.y >= 0 && player.y < screenBuffer.getHeight()) {
-		screenBuffer.setChar(player.y, player.x, tileChars[static_cast<int>(TileType::PLAYER)]);
+
+	size_t x2 = player.x + cameraDiffX;
+	size_t y2 = player.y + cameraDiffY;
+	if (x2 >= 0 && x2 < screenBuffer.getWidth() && y2 >= 0 && y2 < screenBuffer.getHeight()) {
+		screenBuffer.setChar(y2, x2, tileChars[static_cast<int>(TileType::PLAYER)]);
 	}
 }
 
@@ -58,6 +68,12 @@ void Map::PlacePlayer(int x, int y) {
 		player.y = y;
 		player.standingOn = grid[y][x];
 		RevealArea();
+
+		const int cameraLag = 15;
+		if (player.x - camera.x > cameraLag) camera.x = player.x - cameraLag;
+		if (camera.x - player.x > cameraLag) camera.x = player.x + cameraLag;
+		if (player.y - camera.y > cameraLag) camera.y = player.y - cameraLag;
+		if (camera.y - player.y > cameraLag) camera.y = player.y + cameraLag;
 	}
 }
 

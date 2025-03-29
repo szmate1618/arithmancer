@@ -12,6 +12,10 @@ class Map
 public:
 	enum class TileType { WALL, FLOOR, WATER, LAVA, START, GOAL, EMPTY, PLAYER, ENEMY };
 
+	struct Camera {
+		int x, y;
+	};
+
 	struct Entity {
 		int x, y;
 		TileType standingOn;
@@ -41,6 +45,7 @@ private:
 	static constexpr char tileChars[] = { '#', ' ', '~', '~', 'S', 'G', '.', '@', '*' };
 	static constexpr bool walkable[] = { false, true, false, false, true, true, true, true, true };
 	static constexpr bool walkableByEnemy[] = { false, true,  false, false, true, true, true, true, false };
+	Camera camera;
 	Entity player;
 	std::vector<EnemyEntity> enemies;
 
