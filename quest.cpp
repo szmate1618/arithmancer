@@ -3,7 +3,7 @@
 
 Quest::Quest(Game& game) : game(game), state(State::WANDERING), map(nullptr), battle(nullptr)
 {
-	map = std::unique_ptr<Map>(new Map([this]()->void { this->StartBattle(); }, 100, 50, 20));
+	map = std::make_unique<Map>([this]()->void { this->StartBattle(); }, 100, 50, 20);
 	map->GenerateDungeon(20);
 }
 
@@ -46,7 +46,7 @@ void Quest::EndBattle() {
 void Quest::StartBattle() {
 	state = State::ENTERING_BATTLE;
 
-	battle = std::unique_ptr<Battle>(new Battle([this]()->void { this->EndBattle(); }));
+	battle = std::make_unique<Battle>([this]()->void { this->EndBattle(); });
 	battle->AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
 	battle->AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
 }
