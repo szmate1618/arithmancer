@@ -45,6 +45,14 @@ void Map::PrintDungeon(ScreenBuffer& screenBuffer) {
 		}
 	}
 
+	for (const ProjectileEntity& projectile : projectiles) {
+		size_t x2 = projectile.x + cameraDiffX;
+		size_t y2 = projectile.y + cameraDiffY;
+		if (x2 >= 0 && x2 < screenBuffer.getWidth() && y2 >= 0 && y2 < screenBuffer.getHeight()) {
+			screenBuffer.setChar(y2, x2, tileChars[static_cast<int>(TileType::PROJECTILE)]);
+		}
+	}
+
 	size_t x2 = player.x + cameraDiffX;
 	size_t y2 = player.y + cameraDiffY;
 	if (x2 >= 0 && x2 < screenBuffer.getWidth() && y2 >= 0 && y2 < screenBuffer.getHeight()) {
@@ -80,6 +88,7 @@ void Map::PlacePlayer(int x, int y) {
 void Map::Update(double seconds)
 {
 	RemoveInactiveEnemies();
+	RemoveInactiveProjectiles();
 
 	int dx = 0, dy = 0;
 	if (InputHandler::IsUpPressed()) dy = -1;
@@ -99,8 +108,28 @@ void Map::Update(double seconds)
 			PlacePlayer(player.x, newY);
 		}
 	}
+	if (InputHandler::IsPressed(' ')) {
+		SpawnProjectile(player.x, player.y, player.direction);
+	}
 
+	UpdateProjectiles(seconds);
 	UpdateEnemies(seconds);
+
+	for (ProjectileEntity& projectile : projectiles) {
+		int x = projectile.agent.GetPosition().first;
+		int y = projectile.agent.GetPosition().second;
+		if (IsWalkable(x, y)) {
+			projectile.x = x;
+			projectile.y = y;
+			projectile.standingOn = grid[y][x];
+		}
+		else {
+			projectile.isActive = false;
+		}
+		if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+			projectile.isActive = false;
+		}
+	}
 
 	for (EnemyEntity& enemy : enemies) {
 		if (enemy.x == player.x && enemy.y == player.y) {
@@ -140,6 +169,12 @@ void Map::UpdateEnemies(double seconds)
 	}
 }
 
+void Map::UpdateProjectiles(double seconds) {
+	for (ProjectileEntity& projectile: projectiles) {
+		projectile.agent.Update(seconds);
+	}
+}
+
 void Map::RemoveInactiveEnemies() {
 	for (EnemyEntity& enemy : enemies) {
 		if (!enemy.isActive) {
@@ -147,6 +182,21 @@ void Map::RemoveInactiveEnemies() {
 		}
 	}
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](const EnemyEntity& enemy) { return !enemy.isActive; }), enemies.end());
+}
+
+void Map::RemoveInactiveProjectiles() {
+	for (ProjectileEntity& projectile : projectiles) {
+		if (!projectile.isActive) {
+			grid[projectile.y][projectile.x] = projectile.standingOn;
+		}
+	}
+	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), [](const ProjectileEntity& projectile) { return !projectile.isActive; }), projectiles.end());
+}
+
+void Map::SpawnProjectile(int x, int y, Direction direction) {
+	projectiles.push_back({ x, y, TileType::EMPTY, true, direction,
+		Projectile(x, y, Entity::dx[static_cast<int>(direction)], Entity::dy[static_cast<int>(direction)])
+	});
 }
 
 void Map::RevealArea() {
@@ -256,7 +306,7 @@ void Map::GenerateDungeon(size_t roomCount) {
 			if (grid[y][x] == TileType::FLOOR)
 				if (rand() % 100 == 0) {
 					grid[y][x] = TileType::ENEMY;
-					enemies.push_back({ x, y, TileType::FLOOR, true,
+					enemies.push_back({ x, y, TileType::FLOOR, true, Direction::EAST,
 						Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
 						});
 				}
@@ -351,7 +401,7 @@ void Map::LoadFromString(const std::string& mapString) {
 						PlacePlayer(x, y);
 					}
 					if (tileType == TileType::ENEMY) {
-						enemies.push_back({ x, y, TileType::FLOOR, true,
+						enemies.push_back({ x, y, TileType::FLOOR, true, Direction::EAST,
 							Enemy([this](int x, int y)->bool { return this->IsWalkableByEnemy(x, y); }, x, y)
 							});
 					}

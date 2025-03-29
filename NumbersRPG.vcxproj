@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="projectile.cpp" />
     <ClCompile Include="quest.cpp" />
     <ClCompile Include="stringutils.cpp" />
   </ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="map.hpp" />
     <ClInclude Include="menu.hpp" />
     <ClInclude Include="problem.hpp" />
+    <ClInclude Include="projectile.hpp" />
     <ClInclude Include="quest.hpp" />
     <ClInclude Include="screen.hpp" />
     <ClInclude Include="stringutils.hpp" />

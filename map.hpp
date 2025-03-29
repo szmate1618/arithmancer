@@ -5,12 +5,15 @@
 
 #include "enemy.hpp"
 #include "screen.hpp"
+#include "projectile.hpp"
 
 
 class Map
 {
 public:
-	enum class TileType { WALL, FLOOR, WATER, LAVA, START, GOAL, EMPTY, PLAYER, ENEMY };
+	enum class TileType { WALL, FLOOR, WATER, LAVA, START, GOAL, EMPTY, PLAYER, ENEMY, PROJECTILE };
+
+	enum class Direction { EAST, NORTH_EAST, NORTH, NORTH_WEST, WEST, SOUTH_WEST, SOUTH, SOUTH_EAST };
 
 	struct Camera {
 		int x, y;
@@ -20,9 +23,19 @@ public:
 		int x, y;
 		TileType standingOn;
 		bool isActive = true;
+		Direction direction = Direction::EAST;
+
+		// Coordinate mappings for direction. Keep it in sync with the Direction enum.
+		static constexpr int dx[] = { 1, 1, 0, -1, -1, -1, 0, 1 };
+		static constexpr int dy[] = { 0, -1, -1, -1, 0, 1, 1, 1 };
 	};
+
 	struct EnemyEntity : public Entity {
 		Enemy agent;
+	};
+
+	struct ProjectileEntity : public Entity {
+		Projectile agent;
 	};
 
 	Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount);
@@ -43,12 +56,13 @@ private:
 	size_t WIDTH, HEIGHT;
 	std::vector<std::vector<TileType>> grid;
 	std::vector<std::vector<bool>> fogOfWar;
-	static constexpr char tileChars[] = { '#', ' ', '~', '~', 'S', 'G', '.', '@', '*' };
-	static constexpr bool walkable[] = { false, true, false, false, true, true, true, true, true };
-	static constexpr bool walkableByEnemy[] = { false, true,  false, false, true, true, true, true, false };
+	static constexpr char tileChars[] = { '#', ' ', '~', '~', 'S', 'G', '.', '@', '*', 'o'};
+	static constexpr bool walkable[] = { false, true, false, false, true, true, true, true, true, true };
+	static constexpr bool walkableByEnemy[] = { false, true,  false, false, true, true, true, true, false, true };
 	Camera camera;
 	Entity player;
 	std::vector<EnemyEntity> enemies;
+	std::vector<ProjectileEntity> projectiles;
 
 	struct Room {
 		int x, y, w, h;
@@ -58,6 +72,9 @@ private:
 
 	void UpdateEnemies(double seconds);
 	void RemoveInactiveEnemies();
+	void RemoveInactiveProjectiles();
+	void UpdateProjectiles(double seconds);
+	void SpawnProjectile(int x, int y, Direction direction);
 
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
