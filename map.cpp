@@ -164,7 +164,7 @@ void Map::UpdateEnemies(double seconds)
 			HasLineOfSight(player.x, player.y, enemy.x, enemy.y))
 		{
 			enemy.agent.SpotPlayer(player.x, player.y);
-			enemy.agent.SetPath(GetShortestPath(enemy.x, enemy.y, player.x, player.y));
+			enemy.agent.AppendPath(GetShortestPath(enemy.x, enemy.y, player.x, player.y));
 		}
 	}
 }

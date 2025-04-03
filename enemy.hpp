@@ -61,6 +61,28 @@ public:
 		pathIndex = 0;
 	}
 
+	void AppendPath(const std::vector<std::pair<int, int>>& newPath) {
+		if (path.empty()) {
+			SetPath(newPath);
+		}
+		else {
+			std::vector<std::pair<int, int>> result;
+
+			// Append first pathIndex elements of A
+			for (int i = 0; i < pathIndex && i < path.size(); ++i) {
+				result.push_back(path.at(i));
+			}
+			if (path.at(pathIndex) != newPath.at(0))
+			{
+				result.push_back(path.at(pathIndex));
+			}
+
+			result.insert(result.end(), newPath.begin(), newPath.end());
+
+			path = result;
+		}
+	}
+
 	std::pair<int, int> GetPosition() const {
 		return { posX, posY };
 	}
