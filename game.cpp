@@ -20,6 +20,7 @@ void Game::Draw(ScreenBuffer& screenBuffer) {
 		menu.Draw(screenBuffer);
 		break;
 	case State::QUEST_RUNNING:
+		screenBuffer.clear();
 		quest->Draw(screenBuffer);
 		break;
 	}
