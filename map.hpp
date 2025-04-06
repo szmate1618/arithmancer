@@ -55,6 +55,9 @@ public:
 	void GenerateDungeon(size_t roomCount);
 	void LoadFromString(const std::string& mapString);
 
+	bool HasPlayerWon() const;
+	bool HasPlayerLost() const;
+
 private:
 	std::function<void()> startBattleCallback;
 	size_t WIDTH, HEIGHT;
@@ -88,7 +91,4 @@ private:
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
 	size_t ManhattanDistance(int x1, int y1, int x2, int y2) const;
-
-	bool HasPlayerWon() const;
-	bool HasPlayerLost() const;
 };
