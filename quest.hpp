@@ -21,6 +21,9 @@ public:
 	Quest(Game& game);
 	void Draw(ScreenBuffer& screenBuffer);
 	void Update(double seconds);
+
+	bool HasPlayerWon() const;
+	bool HasPlayerLost() const;
 private:
 	State state;
 	Game& game;

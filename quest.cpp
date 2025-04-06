@@ -42,6 +42,16 @@ void Quest::Update(double seconds)
 	}
 }
 
+bool Quest::HasPlayerWon() const
+{
+	return map->HasPlayerWon();
+}
+
+bool Quest::HasPlayerLost() const
+{
+	return map->HasPlayerLost();
+}
+
 void Quest::EndBattle() {
 	state = State::WANDERING;
 }
