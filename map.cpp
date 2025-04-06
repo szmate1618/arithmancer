@@ -140,9 +140,21 @@ void Map::Update(double seconds)
 		if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
 			projectile.isActive = false;
 		}
+
+		if (projectile.isActive == false) continue;
+		for (EnemyEntity& enemy : enemies) {
+			if (enemy.isActive == false) continue;
+			if (enemy.x == projectile.x && projectile.y == player.y) {
+				// Mark the enemy as inactive, so that it will be removed after the battle.
+				projectile.isActive = false;
+				startBattleCallback();
+				break;  // TODO: Figure out if this really is needed.
+			}
+		}
 	}
 
 	for (EnemyEntity& enemy : enemies) {
+		if (enemy.isActive == false) continue;
 		if (enemy.x == player.x && enemy.y == player.y) {
 			// Mark the enemy as inactive, so that it will be removed after the battle.
 			enemy.isActive = false;
