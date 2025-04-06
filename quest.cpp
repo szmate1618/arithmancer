@@ -7,7 +7,7 @@ Quest::Quest(Game& game) : game(game), state(State::WANDERING), map(nullptr), ba
 {
 	map = std::make_unique<Map>([this]()->void { this->StartBattle(); }, 200, 100, 20);
 	//map->GenerateDungeon(20);
-	map->LoadFromString(debugMap03);
+	map->LoadFromString(debugMap04);
 }
 
 void Quest::Draw(ScreenBuffer& screenBuffer)
