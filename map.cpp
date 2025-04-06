@@ -262,6 +262,34 @@ size_t Map::ManhattanDistance(int x1, int y1, int x2, int y2) const {
 	return abs(x2 - x1) + abs(y2 - y1);
 }
 
+bool Map::HasPlayerWon() const
+{
+	switch (winCondition) {
+	case WIN_CONDITION::NONE:
+		return false;
+	case WIN_CONDITION::REACHED_GOAL:
+		return grid.at(player.y).at(player.x) == TileType::GOAL;
+	case WIN_CONDITION::DEFEATED_ALL_ENEMIES:
+		return enemies.size() == 0;
+	case WIN_CONDITION::DEFEATED_ALL_ENEMIES_AND_REACHED_GOAL:
+		return enemies.size() == 0 && grid.at(player.y).at(player.x) == TileType::GOAL;
+	default:
+		return true;
+	}
+}
+
+bool Map::HasPlayerLost() const
+{
+	switch (loseCondition) {
+	case LOSE_CONDITION::NONE:
+		return false;
+	case LOSE_CONDITION::LOST_ALL_HEALTH:
+		return player.health <= 0;
+	default:
+		return true;
+	}
+}
+
 // Dungeon generation function
 void Map::GenerateDungeon(size_t roomCount) {
 	Reset();

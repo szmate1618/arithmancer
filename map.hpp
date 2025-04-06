@@ -38,6 +38,10 @@ public:
 		Projectile agent;
 	};
 
+	struct PlayerEntity :public Entity {
+		int health = 10;
+	};
+
 	Map(const std::function<void()>& startBattleCallback, size_t width, size_t height, size_t roomCount);
 	void PrintDungeon(ScreenBuffer& screenBuffer);
 	bool IsWalkable(int x, int y) const;
@@ -60,13 +64,18 @@ private:
 	static constexpr bool walkable[] = { false, true, false, false, true, true, true, true, true, true };
 	static constexpr bool walkableByEnemy[] = { false, true,  false, false, true, true, true, true, false, true };
 	Camera camera;
-	Entity player;
+	PlayerEntity player;
 	std::vector<EnemyEntity> enemies;
 	std::vector<ProjectileEntity> projectiles;
 
 	struct Room {
 		int x, y, w, h;
 	};
+
+	enum class WIN_CONDITION { NONE, REACHED_GOAL, DEFEATED_ALL_ENEMIES, DEFEATED_ALL_ENEMIES_AND_REACHED_GOAL };
+	WIN_CONDITION winCondition = WIN_CONDITION::NONE;
+	enum class LOSE_CONDITION { NONE, LOST_ALL_HEALTH };
+	LOSE_CONDITION loseCondition = LOSE_CONDITION::NONE;
 
 	void Reset();
 
@@ -79,4 +88,7 @@ private:
 	void RevealArea();
 	bool HasLineOfSight(int x1, int y1, int x2, int y2) const;
 	size_t ManhattanDistance(int x1, int y1, int x2, int y2) const;
+
+	bool HasPlayerWon() const;
+	bool HasPlayerLost() const;
 };
