@@ -72,6 +72,17 @@ bool Map::IsWalkableByEnemy(int x, int y) const {
 
 void Map::PlacePlayer(int x, int y) {
 	if (IsWalkable(x, y)) {
+
+		int dx = x - player.x;
+		int dy = y - player.y;
+		for (size_t i = 0; i < 8; i++)
+		{
+			if (Entity::dx[i] == dx && Entity::dy[i] == dy) {
+				player.direction = static_cast<Direction>(i);
+				break;
+			}
+		}
+
 		player.x = x;
 		player.y = y;
 		player.standingOn = grid[y][x];
