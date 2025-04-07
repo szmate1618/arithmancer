@@ -7,19 +7,36 @@
 
 
 Game::Game() :
-	menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
+	mainMenu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
+	campaignSelectionMenu(),
+	questSelectionMenu(),
 	gameState(State::MAIN_MENU),
 	campaigns(),
 	isRunning(true)
 {
 	campaigns.push_back(std::make_unique<Campaign>());
 	campaigns.back()->AddQuest(std::make_unique<Quest>(*this));
+
+	campaignSelectionMenu = Menu(
+		{ "Campaign 1", "Campaign 2", "Campaign 3" },
+		{
+			[this]() { this->currentCampaignIndex = 0; this->gameState = State::QUEST_SELECTION_MENU; },
+			[this]() { this->currentCampaignIndex = 1; this->gameState = State::QUEST_SELECTION_MENU; },
+			[this]() { this->currentCampaignIndex = 2; this->gameState = State::QUEST_SELECTION_MENU; }
+		}
+	);
 }
 
 void Game::Draw(ScreenBuffer& screenBuffer) {
 	switch (gameState) {
 	case State::MAIN_MENU:
-		menu.Draw(screenBuffer);
+		mainMenu.Draw(screenBuffer);
+		break;
+	case State::CAMPAIGN_SELECTION_MENU:
+		campaignSelectionMenu.Draw(screenBuffer);
+		break;
+	case State::QUEST_SELECTION_MENU:
+		questSelectionMenu.Draw(screenBuffer);
 		break;
 	case State::CAMPAIGN_RUNNING:
 		screenBuffer.clear();
@@ -32,7 +49,13 @@ void Game::Update(double seconds) {
 	InputHandler::Update();
 	switch (gameState) {
 	case State::MAIN_MENU:
-		menu.Update(seconds);
+		mainMenu.Update(seconds);
+		break;
+	case State::CAMPAIGN_SELECTION_MENU:
+		campaignSelectionMenu.Update(seconds);
+		break;
+	case State::QUEST_SELECTION_MENU:
+		questSelectionMenu.Update(seconds);
 		break;
 	case State::CAMPAIGN_RUNNING:
 		campaigns.at(currentCampaignIndex)->Update(seconds);
@@ -49,7 +72,7 @@ void Game::Quit() {
 }
 
 void Game::NewGame() {
-	gameState = State::CAMPAIGN_RUNNING;
+	gameState = State::CAMPAIGN_SELECTION_MENU;
 
 	currentCampaignIndex = 0;
 }

@@ -14,6 +14,8 @@ class Game {
 public:
 	enum class State {
 		MAIN_MENU,
+		CAMPAIGN_SELECTION_MENU,
+		QUEST_SELECTION_MENU,
 		CAMPAIGN_RUNNING
 	};
 
@@ -25,7 +27,9 @@ public:
 	void NewGame();
 
 private:
-	Menu menu;
+	Menu mainMenu;
+	Menu campaignSelectionMenu;
+	Menu questSelectionMenu;
 	std::vector<std::unique_ptr<Campaign>> campaigns;
 	size_t currentCampaignIndex = 0;
 	State gameState;

@@ -1,6 +1,10 @@
 #include "menu.hpp"
 
 
+Menu::Menu()
+	: optionTexts({}), optionActions({}), selectedOption(0) {
+}
+
 Menu::Menu(const std::vector<std::string>& options, const std::vector<MenuAction>& actions)
 	: optionTexts(options), optionActions(actions), selectedOption(0) {
 }

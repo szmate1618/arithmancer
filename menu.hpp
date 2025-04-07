@@ -12,6 +12,7 @@ class Menu
 public:
 	using MenuAction = std::function<void()>;
 
+	Menu();
 	Menu(const std::vector<std::string>& options, const std::vector<std::function<void()>>& actions);
 	void Draw(ScreenBuffer& screenBuffer);
 	void Update(double seconds);
