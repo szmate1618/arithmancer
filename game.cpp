@@ -9,9 +9,11 @@
 Game::Game() :
 	menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
 	gameState(State::MENU),
-	quest(nullptr),
+	campaigns(),
 	isRunning(true)
 {
+	campaigns.push_back(std::make_unique<Campaign>());
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this));
 }
 
 void Game::Draw(ScreenBuffer& screenBuffer) {
@@ -19,9 +21,9 @@ void Game::Draw(ScreenBuffer& screenBuffer) {
 	case State::MENU:
 		menu.Draw(screenBuffer);
 		break;
-	case State::QUEST_RUNNING:
+	case State::CAMPAIGN_RUNNING:
 		screenBuffer.clear();
-		quest->Draw(screenBuffer);
+		campaigns.at(currentCampaignIndex)->Draw(screenBuffer);
 		break;
 	}
 }
@@ -32,8 +34,8 @@ void Game::Update(double seconds) {
 	case State::MENU:
 		menu.Update(seconds);
 		break;
-	case State::QUEST_RUNNING:
-		quest->Update(seconds);
+	case State::CAMPAIGN_RUNNING:
+		campaigns.at(currentCampaignIndex)->Update(seconds);
 		break;
 	}
 }
@@ -47,7 +49,7 @@ void Game::Quit() {
 }
 
 void Game::NewGame() {
-	gameState = State::QUEST_RUNNING;
+	gameState = State::CAMPAIGN_RUNNING;
 
-	quest = std::make_unique<Quest>(*this);
+	currentCampaignIndex = 0;
 }

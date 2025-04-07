@@ -7,14 +7,14 @@
 #include "menu.hpp"
 #include "input.hpp"
 #include "battle.hpp"
-#include "quest.hpp"
+#include "campaign.hpp"
 
 
 class Game {
 public:
 	enum class State {
 		MENU,
-		QUEST_RUNNING
+		CAMPAIGN_RUNNING
 	};
 
 	Game();
@@ -26,7 +26,8 @@ public:
 
 private:
 	Menu menu;
-	std::unique_ptr<Quest> quest;
+	std::vector<std::unique_ptr<Campaign>> campaigns;
+	size_t currentCampaignIndex = 0;
 	State gameState;
 	bool isRunning;
 };
