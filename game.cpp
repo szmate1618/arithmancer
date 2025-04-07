@@ -8,7 +8,7 @@
 
 Game::Game() :
 	menu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
-	gameState(State::MENU),
+	gameState(State::MAIN_MENU),
 	campaigns(),
 	isRunning(true)
 {
@@ -18,7 +18,7 @@ Game::Game() :
 
 void Game::Draw(ScreenBuffer& screenBuffer) {
 	switch (gameState) {
-	case State::MENU:
+	case State::MAIN_MENU:
 		menu.Draw(screenBuffer);
 		break;
 	case State::CAMPAIGN_RUNNING:
@@ -31,7 +31,7 @@ void Game::Draw(ScreenBuffer& screenBuffer) {
 void Game::Update(double seconds) {
 	InputHandler::Update();
 	switch (gameState) {
-	case State::MENU:
+	case State::MAIN_MENU:
 		menu.Update(seconds);
 		break;
 	case State::CAMPAIGN_RUNNING:

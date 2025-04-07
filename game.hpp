@@ -13,7 +13,7 @@
 class Game {
 public:
 	enum class State {
-		MENU,
+		MAIN_MENU,
 		CAMPAIGN_RUNNING
 	};
 
