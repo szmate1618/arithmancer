@@ -14,7 +14,7 @@ public:
 
 	Menu();
 	Menu(const std::vector<std::string>& options, const std::vector<std::function<void()>>& actions);
-	void Draw(ScreenBuffer& screenBuffer);
+	void Draw(ScreenBuffer& screenBuffer) const;
 	void Update(double seconds);
 
 private:

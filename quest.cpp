@@ -43,6 +43,7 @@ void Quest::Draw(ScreenBuffer& screenBuffer)
 {
 	switch (state) {
 	case State::WANDERING:
+		screenBuffer.clear();
 		map->PrintDungeon(screenBuffer);
 		break;
 	case State::ENTERING_BATTLE:

@@ -9,7 +9,6 @@
 Game::Game() :
 	mainMenu({ "New game", "Quit" }, { [this]()->void { this->NewGame(); }, [this]()->void { this->Quit(); } }),
 	campaignSelectionMenu(),
-	questSelectionMenu(),
 	gameState(State::MAIN_MENU),
 	campaigns(),
 	isRunning(true)
@@ -24,9 +23,9 @@ Game::Game() :
 	campaignSelectionMenu = Menu(
 		{ "Dev Campaign", "Campaign 2", "Campaign 3" },
 		{
-			[this]() { this->currentCampaignIndex = 0; this->gameState = State::QUEST_SELECTION_MENU; },
-			[this]() { this->currentCampaignIndex = 1; this->gameState = State::QUEST_SELECTION_MENU; },
-			[this]() { this->currentCampaignIndex = 2; this->gameState = State::QUEST_SELECTION_MENU; }
+			[this]() { this->currentCampaignIndex = 0; this->gameState = State::CAMPAIGN_RUNNING; },
+			[this]() { this->currentCampaignIndex = 1; this->gameState = State::CAMPAIGN_RUNNING; },
+			[this]() { this->currentCampaignIndex = 2; this->gameState = State::CAMPAIGN_RUNNING; }
 		}
 	);
 }
@@ -39,11 +38,7 @@ void Game::Draw(ScreenBuffer& screenBuffer) {
 	case State::CAMPAIGN_SELECTION_MENU:
 		campaignSelectionMenu.Draw(screenBuffer);
 		break;
-	case State::QUEST_SELECTION_MENU:
-		questSelectionMenu.Draw(screenBuffer);
-		break;
 	case State::CAMPAIGN_RUNNING:
-		screenBuffer.clear();
 		campaigns.at(currentCampaignIndex)->Draw(screenBuffer);
 		break;
 	}
@@ -57,9 +52,6 @@ void Game::Update(double seconds) {
 		break;
 	case State::CAMPAIGN_SELECTION_MENU:
 		campaignSelectionMenu.Update(seconds);
-		break;
-	case State::QUEST_SELECTION_MENU:
-		questSelectionMenu.Update(seconds);
 		break;
 	case State::CAMPAIGN_RUNNING:
 		campaigns.at(currentCampaignIndex)->Update(seconds);

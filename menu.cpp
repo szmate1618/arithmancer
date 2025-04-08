@@ -9,7 +9,7 @@ Menu::Menu(const std::vector<std::string>& options, const std::vector<MenuAction
 	: optionTexts(options), optionActions(actions), selectedOption(0) {
 }
 
-void Menu::Draw(ScreenBuffer& screenBuffer)
+void Menu::Draw(ScreenBuffer& screenBuffer) const
 {
 	for (size_t i = 0; i < screenBuffer.getHeight(); i++)
 	{
