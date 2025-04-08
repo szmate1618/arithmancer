@@ -9,6 +9,12 @@
 
 class Game;
 
+struct QuestConfiguration
+{
+	enum class MapSource { BUILTIN, FROM_FILE, RANDOM_GENERATED } mapSource;
+	int arg1;
+};
+
 class Quest
 {
 public:
@@ -19,6 +25,7 @@ public:
 	};
 
 	Quest(Game& game);
+	Quest(Game& game, QuestConfiguration configuration);
 	void Draw(ScreenBuffer& screenBuffer);
 	void Update(double seconds);
 

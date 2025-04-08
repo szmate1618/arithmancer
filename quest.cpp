@@ -10,6 +10,35 @@ Quest::Quest(Game& game) : game(game), state(State::WANDERING), map(nullptr), ba
 	map->LoadFromString(debugMap04);
 }
 
+Quest::Quest(Game& game, QuestConfiguration configuration) : game(game), state(State::WANDERING), map(nullptr), battle(nullptr)
+{
+	map = std::make_unique<Map>([this]()->void { this->StartBattle(); }, 200, 100, 20);
+	switch (configuration.mapSource) {
+	case QuestConfiguration::MapSource::BUILTIN: {
+		switch (configuration.arg1) {
+		default:
+			[[fallthrough]];
+		case 0:
+			map->LoadFromString(debugMap00);
+			break;
+		case 1:
+			map->LoadFromString(debugMap01);
+			break;
+		case 2:
+			map->LoadFromString(debugMap02);
+			break;
+		case 3:
+			map->LoadFromString(debugMap03);
+			break;
+		case 4:
+			map->LoadFromString(debugMap04);
+			break;
+		}
+		break;
+	}
+	}
+}
+
 void Quest::Draw(ScreenBuffer& screenBuffer)
 {
 	switch (state) {

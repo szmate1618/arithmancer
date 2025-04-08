@@ -15,10 +15,14 @@ Game::Game() :
 	isRunning(true)
 {
 	campaigns.push_back(std::make_unique<Campaign>());
-	campaigns.back()->AddQuest(std::make_unique<Quest>(*this));
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this, QuestConfiguration(QuestConfiguration::MapSource::BUILTIN, 0)));
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this, QuestConfiguration(QuestConfiguration::MapSource::BUILTIN, 1)));
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this, QuestConfiguration(QuestConfiguration::MapSource::BUILTIN, 2)));
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this, QuestConfiguration(QuestConfiguration::MapSource::BUILTIN, 3)));
+	campaigns.back()->AddQuest(std::make_unique<Quest>(*this, QuestConfiguration(QuestConfiguration::MapSource::BUILTIN, 4)));
 
 	campaignSelectionMenu = Menu(
-		{ "Campaign 1", "Campaign 2", "Campaign 3" },
+		{ "Dev Campaign", "Campaign 2", "Campaign 3" },
 		{
 			[this]() { this->currentCampaignIndex = 0; this->gameState = State::QUEST_SELECTION_MENU; },
 			[this]() { this->currentCampaignIndex = 1; this->gameState = State::QUEST_SELECTION_MENU; },
