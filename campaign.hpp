@@ -13,8 +13,8 @@ public:
 	enum class State {
 		QUEST_SELECTION_MENU,
 		RUNNING,
-		VICTORY,
-		DEFEAT
+		QUEST_VICTORY_SCREEN,
+		QUEST_DEFEAT_SCREEN
 	};
 
 	void AddQuest(std::unique_ptr<Quest> quest);

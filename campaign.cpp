@@ -47,12 +47,12 @@ void Campaign::Update(double seconds) {
 
 		break;
 	}
-	case State::VICTORY:
+	case State::QUEST_VICTORY_SCREEN:
 		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
 		{
 		}
 		break;
-	case State::DEFEAT:
+	case State::QUEST_DEFEAT_SCREEN:
 		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
 		{
 		}
@@ -70,10 +70,10 @@ void Campaign::Draw(ScreenBuffer& screenBuffer) const {
 			quests[currentQuestIndex]->Draw(screenBuffer);
 		}
 		break;
-	case State::VICTORY:
+	case State::QUEST_VICTORY_SCREEN:
 		DrawVictoryScreen(screenBuffer);
 		break;
-	case State::DEFEAT:
+	case State::QUEST_DEFEAT_SCREEN:
 		DrawDefeatScreen(screenBuffer);
 		break;
 	}
