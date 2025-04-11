@@ -31,7 +31,7 @@ void Campaign::Update(double seconds) {
 	case State::QUEST_SELECTION_MENU:
 		questSelectionMenu.Update(seconds);
 		break;
-	case State::RUNNING:
+	case State::RUNNING: {
 		if (currentQuestIndex >= quests.size()) {
 			std::cout << "All quests completed!\n";
 			return;
@@ -47,6 +47,17 @@ void Campaign::Update(double seconds) {
 
 		break;
 	}
+	case State::VICTORY:
+		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
+		{
+		}
+		break;
+	case State::DEFEAT:
+		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
+		{
+		}
+		break;
+	}
 }
 
 void Campaign::Draw(ScreenBuffer& screenBuffer) const {
@@ -59,5 +70,47 @@ void Campaign::Draw(ScreenBuffer& screenBuffer) const {
 			quests[currentQuestIndex]->Draw(screenBuffer);
 		}
 		break;
+	case State::VICTORY:
+		DrawVictoryScreen(screenBuffer);
+		break;
+	case State::DEFEAT:
+		DrawDefeatScreen(screenBuffer);
+		break;
+	}
+}
+
+void Campaign::DrawVictoryScreen(ScreenBuffer& screenBuffer) const
+{
+	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
+	{
+		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
+		{
+			screenBuffer.setChar(i, j, ' ');
+		}
+	}
+
+	std::string message = "Victory! Press [Enter] to continue...";
+	size_t startW = screenBuffer.getWidth() / 2 - message.length() / 2;
+	for (size_t i = 0; i < message.length(); i++)
+	{
+		screenBuffer.setChar(screenBuffer.getHeight() / 2, startW + i, message[i]);
+	}
+}
+
+void Campaign::DrawDefeatScreen(ScreenBuffer& screenBuffer) const
+{
+	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
+	{
+		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
+		{
+			screenBuffer.setChar(i, j, ' ');
+		}
+	}
+
+	std::string message = "Defeat! Press [Enter] to continue...";
+	size_t startW = screenBuffer.getWidth() / 2 - message.length() / 2;
+	for (size_t i = 0; i < message.length(); i++)
+	{
+		screenBuffer.setChar(screenBuffer.getHeight() / 2, startW + i, message[i]);
 	}
 }

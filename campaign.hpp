@@ -12,7 +12,9 @@ class Campaign {
 public:
 	enum class State {
 		QUEST_SELECTION_MENU,
-		RUNNING
+		RUNNING,
+		VICTORY,
+		DEFEAT
 	};
 
 	void AddQuest(std::unique_ptr<Quest> quest);
@@ -26,4 +28,7 @@ private:
 	size_t currentQuestIndex = 0;
 	Menu questSelectionMenu;
 	State state;
+
+	void DrawVictoryScreen(ScreenBuffer& screenBuffer) const;
+	void DrawDefeatScreen(ScreenBuffer& screenBuffer) const;
 };

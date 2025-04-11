@@ -21,9 +21,7 @@ public:
 	enum class State {
 		WANDERING,
 		ENTERING_BATTLE,
-		BATTLE,
-		VICTORY,
-		DEFEAT
+		BATTLE
 	};
 
 	Quest(Game& game);
@@ -41,7 +39,4 @@ private:
 
 	void EndBattle();
 	void StartBattle();
-
-	void DrawVictoryScreen(ScreenBuffer& screenBuffer);
-	void DrawDefeatScreen(ScreenBuffer& screenBuffer);
 };

@@ -53,12 +53,6 @@ void Quest::Draw(ScreenBuffer& screenBuffer)
 	case State::BATTLE:
 		battle->Draw(screenBuffer);
 		break;
-	case State::VICTORY:
-		DrawVictoryScreen(screenBuffer);
-		break;
-	case State::DEFEAT:
-		DrawDefeatScreen(screenBuffer);
-		break;
 	}
 }
 
@@ -74,16 +68,6 @@ void Quest::Update(double seconds)
 		break;
 	case State::BATTLE:
 		battle->Update(seconds);
-		break;
-	case State::VICTORY:
-		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
-		{
-		}
-		break;
-	case State::DEFEAT:
-		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
-		{
-		}
 		break;
 	}
 }
@@ -108,40 +92,4 @@ void Quest::StartBattle() {
 	battle = std::make_unique<Battle>([this]()->void { this->EndBattle(); });
 	battle->AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
 	battle->AddProblem(std::make_unique<AdditionProblem>(AdditionProblem()));
-}
-
-void Quest::DrawVictoryScreen(ScreenBuffer& screenBuffer)
-{
-	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
-	{
-		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
-		{
-			screenBuffer.setChar(i, j, ' ');
-		}
-	}
-
-	std::string message = "Victory! Press [enter] to continue...";
-	size_t startW = screenBuffer.getWidth() / 2 - message.length() / 2;
-	for (size_t i = 0; i < message.length(); i++)
-	{
-		screenBuffer.setChar(screenBuffer.getHeight() / 2, startW + i, message[i]);
-	}
-}
-
-void Quest::DrawDefeatScreen(ScreenBuffer& screenBuffer)
-{
-	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
-	{
-		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
-		{
-			screenBuffer.setChar(i, j, ' ');
-		}
-	}
-
-	std::string message = "Defeat! Press [enter] to continue...";
-	size_t startW = screenBuffer.getWidth() / 2 - message.length() / 2;
-	for (size_t i = 0; i < message.length(); i++)
-	{
-		screenBuffer.setChar(screenBuffer.getHeight() / 2, startW + i, message[i]);
-	}
 }
