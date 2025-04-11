@@ -28,6 +28,8 @@ private:
 	size_t currentQuestIndex = 0;
 	Menu questSelectionMenu;
 	State state;
+	int victoryScreenTransitionCounter;
+	int defeatScreenTransitionCounter;
 
 	void DrawVictoryScreen(ScreenBuffer& screenBuffer) const;
 	void DrawDefeatScreen(ScreenBuffer& screenBuffer) const;

@@ -40,8 +40,12 @@ void Campaign::Update(double seconds) {
 		Quest* currentQuest = quests[currentQuestIndex].get();
 		currentQuest->Update(seconds);
 
-		if (currentQuest->HasPlayerWon()) {
+		if (currentQuest->HasPlayerLost()) {
+			state = State::QUEST_DEFEAT_SCREEN;
+			defeatScreenTransitionCounter = 5;
+		} else if (currentQuest->HasPlayerWon()) {
 			state = State::QUEST_VICTORY_SCREEN;
+			victoryScreenTransitionCounter = 5;
 		}
 
 		break;
@@ -52,12 +56,14 @@ void Campaign::Update(double seconds) {
 			state = State::RUNNING;
 			currentQuestIndex++;  // TODO: Handle last quest.
 		}
+		if (victoryScreenTransitionCounter > 0) victoryScreenTransitionCounter--;
 		break;
 	case State::QUEST_DEFEAT_SCREEN:
 		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
 		{
 			state = State::QUEST_SELECTION_MENU;
 		}
+		if (defeatScreenTransitionCounter > 0) defeatScreenTransitionCounter--;
 		break;
 	}
 }
@@ -73,10 +79,20 @@ void Campaign::Draw(ScreenBuffer& screenBuffer) const {
 		}
 		break;
 	case State::QUEST_VICTORY_SCREEN:
-		DrawVictoryScreen(screenBuffer);
+		if (victoryScreenTransitionCounter) {
+			quests[currentQuestIndex]->Draw(screenBuffer);
+		}
+		else {
+			DrawVictoryScreen(screenBuffer);
+		}
 		break;
 	case State::QUEST_DEFEAT_SCREEN:
-		DrawDefeatScreen(screenBuffer);
+		if (defeatScreenTransitionCounter) {
+			quests[currentQuestIndex]->Draw(screenBuffer);
+		}
+		else {
+			DrawDefeatScreen(screenBuffer);
+		}
 		break;
 	}
 }
