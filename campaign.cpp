@@ -41,8 +41,7 @@ void Campaign::Update(double seconds) {
 		currentQuest->Update(seconds);
 
 		if (currentQuest->HasPlayerWon()) {
-			std::cout << "Quest " << currentQuestIndex << " completed!\n";
-			++currentQuestIndex;
+			state = State::QUEST_VICTORY_SCREEN;
 		}
 
 		break;
@@ -50,11 +49,14 @@ void Campaign::Update(double seconds) {
 	case State::QUEST_VICTORY_SCREEN:
 		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
 		{
+			state = State::RUNNING;
+			currentQuestIndex++;  // TODO: Handle last quest.
 		}
 		break;
 	case State::QUEST_DEFEAT_SCREEN:
 		if (InputHandler::IsPressed('\n') || InputHandler::IsPressed('\r'))
 		{
+			state = State::QUEST_SELECTION_MENU;
 		}
 		break;
 	}
@@ -81,7 +83,7 @@ void Campaign::Draw(ScreenBuffer& screenBuffer) const {
 
 void Campaign::DrawVictoryScreen(ScreenBuffer& screenBuffer) const
 {
-	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
+	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 + 5; i++)
 	{
 		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
 		{
@@ -99,7 +101,7 @@ void Campaign::DrawVictoryScreen(ScreenBuffer& screenBuffer) const
 
 void Campaign::DrawDefeatScreen(ScreenBuffer& screenBuffer) const
 {
-	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 - 5; i++)
+	for (size_t i = screenBuffer.getHeight() / 2 - 5; i <= screenBuffer.getHeight() / 2 + 5; i++)
 	{
 		for (size_t j = 0; j < screenBuffer.getWidth(); j++)
 		{
